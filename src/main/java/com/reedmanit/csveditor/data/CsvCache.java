@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.reedmanit.cvseditor.data;
+package com.reedmanit.csveditor.data;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
@@ -22,8 +22,10 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
 
 /**
@@ -101,13 +103,15 @@ public class CsvCache {
             final int j = i;
             TableColumn col = new TableColumn(headers[i]);
             col.setCellValueFactory((Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>) param -> {
-                System.out.println("Cell Value");
+     //           System.out.println("Cell Value");
+               
                 if (param.getValue().get(j) != null) {
                     return new SimpleStringProperty(param.getValue().get(j).toString());
                 } else {
                     return null;
                 }
             });
+         //   col.setOnEditCommit( e -> OnEditCommit(e) );
 
             table.getColumns().addAll(col);
             this.columnNames.add(col.getText());
@@ -129,6 +133,15 @@ public class CsvCache {
         table.setItems(data);
 
     }
+    
+    public void OnEditCommit(Event e) {
+         
+      System.out.println(e.getEventType());
+        
+    }
+    
+    
+    
 
     public void setDataFile(BufferedReader aDataFile) {
         in = aDataFile;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.reedmanit.cvseditor.app;
+package com.reedmanit.csveditor.app;
 
 
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        stage.getIcons().add(new Image(Main.class.getResourceAsStream("/com/reedmanit/cvseditor/view/file.png")));
+        stage.getIcons().add(new Image(Main.class.getResourceAsStream("/com/reedmanit/csveditor/view/file.png")));
 
         stage.setTitle("My CVS Editor");
 
@@ -57,7 +57,7 @@ public class Main extends Application {
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
-        fxmlLoader = new FXMLLoader(Main.class.getResource("/com/reedmanit/cvseditor/view/" + fxml + ".fxml"));
+        fxmlLoader = new FXMLLoader(Main.class.getResource("/com/reedmanit/csveditor/view/" + fxml + ".fxml"));
 
         return fxmlLoader.load();
     }
