@@ -96,14 +96,14 @@ public class CsvCache {
 
         CSVReader csvReader = new CSVReaderBuilder(in).build();
 
-        headers = csvReader.readNextSilently();
+        headers = csvReader.readNextSilently();  // pull out the headers from the file
 
         for (int i = 0; i < headers.length; i++) {
 
             final int j = i;
             TableColumn col = new TableColumn(headers[i]);
             col.setCellValueFactory((Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>) param -> {
-     //           System.out.println("Cell Value");
+     
                
                 if (param.getValue().get(j) != null) {
                     return new SimpleStringProperty(param.getValue().get(j).toString());
@@ -111,7 +111,7 @@ public class CsvCache {
                     return null;
                 }
             });
-         //   col.setOnEditCommit( e -> OnEditCommit(e) );
+         
 
             table.getColumns().addAll(col);
             this.columnNames.add(col.getText());

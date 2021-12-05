@@ -10,10 +10,11 @@
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
             <Button fx:id="openFileBT" mnemonicParsing="false" onAction="#openFile" text="Open File" />
-            <Button fx:id="saveBT" mnemonicParsing="false" onAction="#saveFile" text="Save" />
+            <Button fx:id="saveBT" mnemonicParsing="false" onAction="#saveFile" text="Save File" />
+            <Button disable="true" mnemonicParsing="false" text="Search" />
           <Button fx:id="insertRowBT" disable="true" mnemonicParsing="false" text="Insert Row" />
             <Button fx:id="deleteRowBT" disable="true" mnemonicParsing="false" text="Delete Row" />
-            <Button fx:id="aboutBT" mnemonicParsing="false" text="About" />
+            <Button fx:id="aboutBT" mnemonicParsing="false" onAction="#about" text="About" />
         </items>
          <padding>
             <Insets left="20.0" />

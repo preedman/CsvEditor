@@ -8,6 +8,8 @@ package com.reedmanit.csveditor.controller;
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvValidationException;
 import com.reedmanit.csveditor.data.CsvCache;
+import com.reedmanit.csveditor.rules.ExitWithOutSave;
+import com.reedmanit.csveditor.rules.TurnOnSaveButton;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -22,6 +24,8 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
@@ -32,6 +36,11 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.jeasy.rules.api.Fact;
+import org.jeasy.rules.api.Facts;
+import org.jeasy.rules.api.Rules;
+import org.jeasy.rules.api.RulesEngine;
+import org.jeasy.rules.core.DefaultRulesEngine;
 
 /**
  * FXML Controller class
@@ -71,8 +80,46 @@ public class CsvController implements Initializable {
 
     private TableColumn tc = new TableColumn<String, String>();
 
+    private Facts facts;
+
+    private TurnOnSaveButton turnOnSaveButton;
+
+    private Rules rules;
+
+    private RulesEngine rulesEngine;
+    
+    private ExitWithOutSave exitwithOutSave;
+    
+    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        saveBT.setDisable(true);
+
+        rulesEngine = new DefaultRulesEngine();
+
+        facts = new Facts();
+
+        facts.put("OpenButtonState", "DISABLE");
+
+        turnOnSaveButton = new TurnOnSaveButton();
+        turnOnSaveButton.setSaveButton(saveBT);
+        
+        exitwithOutSave = new ExitWithOutSave();
+        
+        
+        
+        facts.put("OpenNewFile", "FALSE");
+        facts.put("EditOccured", "FALSE");
+
+        rules = new Rules();
+        rules.register(turnOnSaveButton);
+        rules.register(exitwithOutSave);
+        
+       
+
+        rulesEngine.fire(rules, facts);
 
         tsm = tableView.getSelectionModel();
         tsm.setSelectionMode(SelectionMode.SINGLE);
@@ -127,6 +174,17 @@ public class CsvController implements Initializable {
     public void openFile() throws IOException, CsvValidationException {
 
         System.out.println("File Open");
+        
+        facts.put("OpenNewFile", "TRUE");
+        rulesEngine.fire(rules, facts);
+        
+        if (exitwithOutSave.isShowAlert()) {
+            Alert a = new Alert(AlertType.WARNING, "New File Opened but data has been modified - have you forgotten to save.?");
+            a.showAndWait();
+            facts.put("OpenNewFile", "FALSE");
+            facts.put("EditOccured", "FALSE");
+            exitwithOutSave.setShowAlert(false);
+        }
 
         FileChooser fileChooser = new FileChooser();
 
@@ -139,10 +197,21 @@ public class CsvController implements Initializable {
 
         if (theCSVFile != null) {
 
+            
+            facts.put("OpenButtonState", "DISABLE");
+            rulesEngine.fire(rules, facts);
             dataCache = new CsvCache(theCSVFile);
             dataCache.buildData();
 
         }
+
+    }
+
+    @FXML
+    private void about() {
+        Alert a = new Alert(AlertType.INFORMATION, "Simple CSV Editor. By ReedmanIT");
+
+        a.showAndWait();
 
     }
 
@@ -172,13 +241,12 @@ public class CsvController implements Initializable {
                 ObservableList tokens = i.next();
 
                 String s[] = new String[tokens.size()];
-                
+
                 for (int a = 0; a < tokens.size(); a++) {   // get from the observable list a string array which does not remove any quote chars
-                    
+
                     s[a] = (String) tokens.get(a);
                 }
-                
-                
+
                 writer.writeNext(s);
 
             }
@@ -207,12 +275,12 @@ public class CsvController implements Initializable {
         // That is the value that has been entered on the screen
         //
         data.get(ce.getTablePosition().getRow()).set(ce.getTablePosition().getColumn(), ce.getNewValue());
+        
+        facts.put("OpenButtonState", "ENABLE");
+        facts.put("EditOccured", "TRUE");
+        rulesEngine.fire(rules, facts);
 
-        TablePosition tp = ce.getTablePosition();
-
-        System.out.println("Row number " + tp.getRow());
-
-        System.out.println("Table Index " + tp.getColumn());
+        
 
     }
 }

@@ -42,7 +42,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.reedmanit.cvseditor.app.Launcher</mainClass>
+                  <mainClass>com.reedmanit.csveditor.app.Launcher</mainClass>
                 </transformer>
               </transformers>
             </configuration>
