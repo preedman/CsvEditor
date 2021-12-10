@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.reedmanit.csveditor.rules;
+package com.reedmanit.csveditor.business.rules;
 
 import org.jeasy.rules.api.Fact;
 import org.jeasy.rules.api.Facts;
@@ -23,18 +23,23 @@ import org.jeasy.rules.api.Rule;
  *
  * @author preed
  */
-public class ExitWithOutSave implements Rule {
+public class FileSizeLimit implements Rule {
     
-    private boolean showAlert = false;
-
+    private boolean showAlert;
+    
+    private static final Integer limit = 10280; 
+    
+    
+   
+    
     @Override
     public String getName() {
-        return "Exit without Save";
+        return "File Size Lmit";
     }
 
     @Override
     public String getDescription() {
-        return "Data has been edited but not saved";
+        return "CSV File Size can not exeed 10 MB";
     }
 
     @Override
@@ -45,22 +50,17 @@ public class ExitWithOutSave implements Rule {
     @Override
     public boolean evaluate(Facts facts) {
         
-        System.out.println("Exit with out saving");
-        
         boolean b = false;
         
-        Fact fileOpen = facts.getFact("OpenNewFile");
-        Fact editOccured = facts.getFact("EditOccured");
+        Fact fileSize = facts.getFact("FileSize");
         
-    
+        Integer i = (Integer) fileSize.getValue();
         
-        System.out.println("edit occurred " + editOccured.toString());
-        System.out.println("file open " + fileOpen.toString());
-        
-        b = editOccured.getValue().equals("TRUE") && (fileOpen.getValue().equals("TRUE"));
-        
-    
-        
+        if (i > limit) {
+            b = true;
+        } else {
+            b = false;
+        }
         return b;
     }
 
@@ -87,5 +87,7 @@ public class ExitWithOutSave implements Rule {
     public void setShowAlert(boolean showAlert) {
         this.showAlert = showAlert;
     }
+    
+    
     
 }

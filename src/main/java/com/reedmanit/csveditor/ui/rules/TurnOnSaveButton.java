@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.reedmanit.csveditor.rules;
+package com.reedmanit.csveditor.ui.rules;
 
 import java.lang.annotation.Annotation;
 import javafx.scene.control.Button;

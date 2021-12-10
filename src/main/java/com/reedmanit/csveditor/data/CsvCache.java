@@ -46,49 +46,9 @@ public class CsvCache {
 
     public CsvCache(File aDataFile) throws IOException {
 
-        Path path = Paths.get(aDataFile.getAbsolutePath());
-
-        long bytes = Files.size(path);
-        System.out.println(String.format("%,d bytes", bytes));
-        System.out.println(String.format("%,d kilobytes", bytes / 1024));
-
-        long kb = bytes / 1024;
-
-        if (kb > 10280) {
-            throw new IOException("CSV File exceeds limit");
-        }
-
         in = new BufferedReader(new FileReader(aDataFile));
 
     }
-
-    /**
-     * public void loadDataFile() throws IOException, CsvValidationException {
-     *
-     * // create csvReader object and skip first Line CSVReader csvReader = new
-     * CSVReaderBuilder(in).build();
-     *
-     * headers = csvReader.readNextSilently();
-     *
-     * // csvReader.skip(1); ObservableList<StringProperty> m =
-     * FXCollections.<StringProperty>observableArrayList();
-     *
-     * String[] records;
-     *
-     * while ((records = csvReader.readNext()) != null) {
-     *
-     * for (int i = 0; i < records.length; i++) {
-     *
-     * m.add(new SimpleStringProperty(records[i]));
-     *
-     * }
-     * data.add(m);
-     *
-     * }
-     *
-     * }
-     *
-     */
 
     public void buildData() throws IOException, CsvValidationException {
 
@@ -103,15 +63,13 @@ public class CsvCache {
             final int j = i;
             TableColumn col = new TableColumn(headers[i]);
             col.setCellValueFactory((Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>) param -> {
-     
-               
+
                 if (param.getValue().get(j) != null) {
                     return new SimpleStringProperty(param.getValue().get(j).toString());
                 } else {
                     return null;
                 }
             });
-         
 
             table.getColumns().addAll(col);
             this.columnNames.add(col.getText());
@@ -133,15 +91,12 @@ public class CsvCache {
         table.setItems(data);
 
     }
-    
+
     public void OnEditCommit(Event e) {
-         
-      System.out.println(e.getEventType());
-        
+
+        System.out.println(e.getEventType());
+
     }
-    
-    
-    
 
     public void setDataFile(BufferedReader aDataFile) {
         in = aDataFile;

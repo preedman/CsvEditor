@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.reedmanit.csveditor.rules;
+package com.reedmanit.csveditor.business.rules;
 
-import com.reedmanit.csveditor.ui.rules.TurnOnSaveButton;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.jeasy.rules.api.Fact;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
-import org.jeasy.rules.api.Rules;
-import org.jeasy.rules.api.RulesEngine;
-import org.jeasy.rules.core.DefaultRulesEngine;
-import org.jeasy.rules.core.InferenceRulesEngine;
-import org.jeasy.rules.core.RuleBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,9 +32,9 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author preed
  */
-public class TurnOnSaveButtonTest {
+public class ValidHeadersTest {
     
-    public TurnOnSaveButtonTest() {
+    public ValidHeadersTest() {
     }
     
     @BeforeAll
@@ -55,32 +53,33 @@ public class TurnOnSaveButtonTest {
     public void tearDown() {
     }
 
-    
+   
 
     /**
-     * Test of execute method, of class TurnOnSaveButton.
+     * Test of evaluate method, of class ValidHeaders.
      */
     @Test
-    public void testExecute() throws Exception {
-        System.out.println("execute");
-        
+    public void testEvaluate() {
+        System.out.println("evaluate");
         Facts facts = new Facts();
         
-        facts.put("OpenButtonState", "OPEN");
+        String[] headers = new String[] { "name", "address" };
         
-        TurnOnSaveButton save = new TurnOnSaveButton();
+        List<String> listOfHeaders = Arrays.asList(headers);
         
-        Rules rules = new Rules();
-        rules.register(save);
+       // List<String> listOfHeaders = new ArrayList<String>();
         
-        // fire rules on known facts
-       // RulesEngine rulesEngine = new InferenceRulesEngine();
-        RulesEngine rulesEngine = new DefaultRulesEngine();
-        rulesEngine.fire(rules, facts);
+        facts.put("Headers", listOfHeaders);
         
         
+        
+        ValidHeaders validHeaders = new ValidHeaders();
+        boolean expResult = false;
+        boolean result = validHeaders.evaluate(facts);
+        assertEquals(expResult, result);
         
        
+        
     }
 
     
