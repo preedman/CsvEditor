@@ -11,7 +11,9 @@ import com.reedmanit.csveditor.data.CsvCache;
 import com.reedmanit.csveditor.ui.rules.ExitWithOutSave;
 import com.reedmanit.csveditor.business.rules.FileSizeLimit;
 import com.reedmanit.csveditor.business.rules.ValidHeaders;
+import com.reedmanit.csveditor.data.Util;
 import com.reedmanit.csveditor.ui.rules.TurnOnSaveButton;
+import com.reedmanit.csveditor.ui.rules.TurnOnSearchButton;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,24 +25,38 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ScrollToEvent;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TablePosition;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -67,6 +83,9 @@ public class CsvController implements Initializable {
     private Button openFileBT;
 
     @FXML
+    private Button searchButton;
+
+    @FXML
     private Button insertRowBT;
 
     @FXML
@@ -77,6 +96,12 @@ public class CsvController implements Initializable {
 
     @FXML
     private Button saveBT;
+
+    @FXML
+    private TextField findTF;
+
+    @FXML
+    private ComboBox colCB;
 
     private File theCSVFile;
 
@@ -99,13 +124,22 @@ public class CsvController implements Initializable {
     private ExitWithOutSave exitwithOutSave;
 
     private FileSizeLimit fileSizeLimit;
-    
+
     private ValidHeaders validHeaders;
+
+    private TurnOnSearchButton turnOnSearchButton;
+
+    private TextInputDialog searchDialog;
+
+    private ObservableList<String> cbData = FXCollections.<String>observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
         saveBT.setDisable(true);
+        searchButton.setDisable(true);
+        findTF.setDisable(true);
+        colCB.setDisable(true);
 
         setUpRules();
 
@@ -113,15 +147,17 @@ public class CsvController implements Initializable {
         tsm.setSelectionMode(SelectionMode.SINGLE);
         tsm.setCellSelectionEnabled(true);
 
+        tableView.getStylesheets().add("/com/reedmanit/csveditor/style/csv.css");
+
         openFileBT.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent e) {
                 try {
-                    openFile();
-                    tableView = dataCache.getTableView();
+                    openFile();   // open the file 
+                    tableView = dataCache.getTableView();  // get the table that was created by the cache
                     tableView.setEditable(true);
-                    borderPaneLayout.setCenter(tableView);
+                    borderPaneLayout.setCenter(tableView);  // center it
 
                     Iterator i = tableView.getColumns().iterator();
 
@@ -132,7 +168,6 @@ public class CsvController implements Initializable {
 
                 } catch (IOException ex) {
                     System.out.println(ex.getMessage());
-                    
 
                 } catch (CsvValidationException ex) {
                     Logger.getLogger(CsvController.class.getName()).log(Level.SEVERE, null, ex);
@@ -170,17 +205,20 @@ public class CsvController implements Initializable {
         fileSizeLimit = new FileSizeLimit();
 
         facts.put("FileSize", 0);   // set up file size rule with inital size
-        
+
         validHeaders = new ValidHeaders();
         List<String> listOfHeaders = new ArrayList<String>();  // create an empty array for initial values
-        
+
         facts.put("Headers", listOfHeaders);
+
+        turnOnSearchButton = new TurnOnSearchButton();
 
         rules = new Rules();
         rules.register(turnOnSaveButton);
         rules.register(exitwithOutSave);
         rules.register(fileSizeLimit);
         rules.register(validHeaders);
+        rules.register(turnOnSearchButton);
 
         rulesEngine.fire(rules, facts);
 
@@ -221,49 +259,71 @@ public class CsvController implements Initializable {
         theCSVFile = fileChooser.showOpenDialog(new Stage());
 
         if (theCSVFile != null) {
-           
-           try { 
+
+            try {
                 processCSVFile();
-           } catch (IOException ioe) {
-               throw ioe;
-           } catch (CsvValidationException ve) {
-               throw ve;
-           }
+                if (turnOnSearchButton.isTurnOnSearchButton()) {
+                    setUpSearch();
+                }
+            } catch (IOException ioe) {
+                throw ioe;
+            } catch (CsvValidationException ve) {
+                throw ve;
+            }
 
         }
 
     }
-    
-    private void processCSVFile() throws IOException, CsvValidationException {
+
+    private void setUpSearch() {
+        searchButton.setDisable(false);
+        findTF.setDisable(false);
+        colCB.setDisable(false);
+        cbData.clear();
+
+        cbData.add("Any Column");
+
+        for (int i = 0; i < dataCache.getHeaders().length; i++) {
+            cbData.add(dataCache.getaHeader(i));
+        }
         
-         if (fileSizeExceedsLimit()) {
-                Alert a = new Alert(AlertType.ERROR, "CSV File exceeds file size limit. Can not be used for processing");
+        
+
+        colCB.setItems(cbData);
+        
+        colCB.getSelectionModel().selectFirst();
+    }
+
+    private void processCSVFile() throws IOException, CsvValidationException {
+
+        if (fileSizeExceedsLimit()) {
+            Alert a = new Alert(AlertType.ERROR, "CSV File exceeds file size limit. Can not be used for processing");
+            a.showAndWait();
+            facts.put("FileSize", 0);  // reset rule variables for rule processing
+            fileSizeLimit.setShowAlert(false);
+            throw new IOException("File Size Limit Exceeded");
+        } else {
+            fileSizeLimit.setShowAlert(false);
+            facts.put("OpenButtonState", "DISABLE");
+
+            dataCache = new CsvCache(theCSVFile);
+            dataCache.buildData();
+            facts.put("Headers", Arrays.asList(dataCache.getHeaders()));
+
+            rulesEngine.fire(rules, facts);
+
+            if (validHeaders.isInValidData()) {
+                Alert a = new Alert(AlertType.ERROR, "CSV File has a header record which contains data. This is invalid.");
                 a.showAndWait();
-                facts.put("FileSize", 0);  // reset rule variables for rule processing
-                fileSizeLimit.setShowAlert(false);
-                throw new IOException("File Size Limit Exceeded");
-            } else {
-                fileSizeLimit.setShowAlert(false);
-                facts.put("OpenButtonState", "DISABLE");
-                
-                dataCache = new CsvCache(theCSVFile);
-                dataCache.buildData();
-                facts.put("Headers", Arrays.asList(dataCache.getHeaders()));
-                
-                rulesEngine.fire(rules, facts);
-                
-                if (validHeaders.isInValidData()) {
-                    Alert a = new Alert(AlertType.ERROR, "CSV File has a header record which contains data. This is invalid.");
-                    a.showAndWait();
-                    facts.put("Headers", new ArrayList<String>());  // reset the headers
-                    validHeaders.setInValidData(false);  // set the valid headers back to false
-                    throw new IOException("Invalid Data in Headers");   // tell the caller that this was in error
-                }
+                facts.put("Headers", new ArrayList<String>());  // reset the headers
+                validHeaders.setInValidData(false);  // set the valid headers back to false
+                throw new IOException("Invalid Data in Headers");   // tell the caller that this was in error
             }
+        }
     }
 
     private boolean fileSizeExceedsLimit() throws IOException {
-        
+
         Path path = Paths.get(theCSVFile.getAbsolutePath());
 
         long bytes = Files.size(path);
@@ -290,6 +350,39 @@ public class CsvController implements Initializable {
     }
 
     @FXML
+    private void searchForData(ActionEvent event) throws IOException {
+
+        
+        System.out.println("Search");
+
+        tableView.getSelectionModel().selectedItemProperty().addListener(
+                new RowSelectChangeListener());
+
+        
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                Util u = new Util();
+                
+                int pos = u.findPosition(tableView.getItems(), findTF.getText());
+                
+                System.out.println("Pos is " + pos);
+                System.out.println("Text is " + findTF.getText());
+                
+                tableView.requestFocus();
+                tableView.getSelectionModel().select(pos-1);
+                
+
+                tableView.scrollTo(pos-1);
+                tableView.getFocusModel().focus(pos-1);
+            }
+        });
+
+       
+    }
+
+    @FXML
+
     private void saveFile(ActionEvent event) throws IOException {
 
         System.out.println("Save file");
@@ -355,4 +448,24 @@ public class CsvController implements Initializable {
         rulesEngine.fire(rules, facts);
 
     }
+
+    private class RowSelectChangeListener implements ChangeListener {
+
+        //public WebView theWebView;
+        public RowSelectChangeListener() {
+
+        }
+
+        @Override
+        public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+            System.out.println("Row selected");
+
+            //     selectedBicycleRack = (BikeRack) observable.getValue();
+            //     if (selectedBicycleRack != null) {
+            //         bicycleRackLocationTF.setText(selectedBicycleRack.getLocation());
+            //     }
+        }
+
+    }
+
 }
