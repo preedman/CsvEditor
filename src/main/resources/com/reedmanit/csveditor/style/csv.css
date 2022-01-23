@@ -21,8 +21,9 @@ limitations under the License.
 .table-row-cell:selected {
   -fx-background-color: red; 
 }
- 
+
 .table-row-cell:selected .text {
   -fx-fill: 0x990000;
 }
+
 

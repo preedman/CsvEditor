@@ -147,7 +147,7 @@ public class CsvController implements Initializable {
         tsm.setSelectionMode(SelectionMode.SINGLE);
         tsm.setCellSelectionEnabled(true);
 
-        tableView.getStylesheets().add("/com/reedmanit/csveditor/style/csv.css");
+   //    tableView.getStylesheets().add("/com/reedmanit/csveditor/style/csv.css");
 
         openFileBT.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -286,11 +286,9 @@ public class CsvController implements Initializable {
         for (int i = 0; i < dataCache.getHeaders().length; i++) {
             cbData.add(dataCache.getaHeader(i));
         }
-        
-        
 
         colCB.setItems(cbData);
-        
+
         colCB.getSelectionModel().selectFirst();
     }
 
@@ -352,48 +350,48 @@ public class CsvController implements Initializable {
     @FXML
     private void searchForData(ActionEvent event) throws IOException {
 
-        
         System.out.println("Search");
 
         tableView.getSelectionModel().selectedItemProperty().addListener(
                 new RowSelectChangeListener());
 
         Util u = new Util();
-        
+
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 int pos = 0;
                 int indexOfHeader = 0;
-                
+
                 boolean allColumns = false;
-                
+
                 String selectedItem = (String) colCB.getSelectionModel().getSelectedItem();
-                
-                if (selectedItem.equals("Any Column")) allColumns = true;
-                
+
+                if (selectedItem.equals("Any Column")) {
+                    allColumns = true;
+                }
+
                 if (allColumns) {
                     pos = u.findPositionInAllCols(tableView.getItems(), findTF.getText());
                 } else {
                     indexOfHeader = dataCache.indexOfHeader(selectedItem);
                     pos = u.findPositionInCol(tableView.getItems(), findTF.getText(), indexOfHeader);
-                }             
-                
-                
-                
+                }
+
                 System.out.println("Pos is " + pos);
                 System.out.println("Text is " + findTF.getText());
-                
-                tableView.requestFocus();
-                tableView.getSelectionModel().select(pos-1);
-                
 
-                tableView.scrollTo(pos-1);
-                tableView.getFocusModel().focus(pos-1);
+                if (pos > 0) {  // search item found
+                    tableView.requestFocus();
+                    tableView.getSelectionModel().select(pos - 1);  // the header is first in row, compensate
+
+                    tableView.scrollTo(pos - 1);
+                    tableView.getFocusModel().focus(pos - 1);
+                }
+
             }
         });
 
-       
     }
 
     @FXML

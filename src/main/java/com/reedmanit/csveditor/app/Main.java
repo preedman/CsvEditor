@@ -49,7 +49,7 @@ public class Main extends Application {
 
         scene = new Scene(loadFXML("cvsui"));
         
-        scene.getStylesheets().add(getClass().getResource("/com/reedmanit/csveditor/style/csv.css").toExternalForm());
+    //   scene.getStylesheets().add(getClass().getResource("/com/reedmanit/csveditor/style/csv.css").toExternalForm());
         
         stage.setScene(scene);
 

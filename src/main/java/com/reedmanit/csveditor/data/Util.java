@@ -71,6 +71,8 @@ public class Util {
             }
         }
         System.out.println("Index is " + index);
+        
+        if (!found) index = 0;
 
         return index;
 
@@ -106,6 +108,9 @@ public class Util {
 
         }
         System.out.println("Index is " + index);
+        
+        if (!found) index = 0;
+        
         return index;
 
     }
