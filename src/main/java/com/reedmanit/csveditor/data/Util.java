@@ -15,7 +15,9 @@
  */
 package com.reedmanit.csveditor.data;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import javafx.collections.ObservableList;
 
 /**
@@ -23,38 +25,89 @@ import javafx.collections.ObservableList;
  * @author preed
  */
 public class Util {
-    
+
     public Util() {
-        
+
     }
-    
-    public int findPosition(ObservableList<ObservableList> listOfLists, String target) {
-        
+
+    public int findPositionInCol(ObservableList<ObservableList> listOfLists, String target, int columnNumber) {
+
+        System.out.println("Find position in col");
+
         Iterator<ObservableList> l = listOfLists.iterator();
-        
+
         int index = 0;
-        
-        while(l.hasNext()) {
+
+        boolean found = false;
+
+        List<String> row = new ArrayList<String>();
+
+        while (l.hasNext()) {   // loop through the entire 2D table
+
             ObservableList o = l.next();
             index++;
             Iterator<String> r = o.iterator();
-            
+
+            row.clear();   // clear row
+            while (r.hasNext()) {  // build row into an Arraylist
+                String s = (String) r.next();
+                row.add(s);
+
+            }
+
+            Iterator<String> rowIterator = row.iterator();
+            int rowColIndex = 0;
+            while (rowIterator.hasNext()) {   // search through the row
+                String element = rowIterator.next();
+                if ((element.contains(target) && (rowColIndex == columnNumber))) { // if the target is there and its in the requested column
+                    found = true;
+                    break;  // stop
+                } else {
+                    rowColIndex++;
+                }
+            }
+            if (found) {
+                break;  // we found the first occurance of the item - lets stop
+            }
+        }
+        System.out.println("Index is " + index);
+
+        return index;
+
+    }
+
+    public int findPositionInAllCols(ObservableList<ObservableList> listOfLists, String target) {
+
+        System.out.println("Find position in all");
+
+        Iterator<ObservableList> l = listOfLists.iterator();
+
+        int index = 0;
+
+        boolean found = false;
+
+        while (l.hasNext()) {
+            ObservableList o = l.next();
+            index++;
+            Iterator<String> r = o.iterator();
+
             while (r.hasNext()) {
                 String s = (String) r.next();
-                System.out.println(s);
-                if (s.equalsIgnoreCase(target)) {
+
+                if (s.contains(target)) {
+                    System.out.println("Found " + s);
+                    found = true;
                     break;
                 }
             }
-            
-            
+            if (found) {
+                break;
+            }
+
         }
+        System.out.println("Index is " + index);
         return index;
-        
-        
-        
-        
+
     }
-    
-    
+
 }

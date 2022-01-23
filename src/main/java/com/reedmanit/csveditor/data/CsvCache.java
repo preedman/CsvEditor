@@ -119,5 +119,19 @@ public class CsvCache {
     public TableView<ObservableList> getTableView() {
         return table;
     }
+    
+    public int indexOfHeader(String aHeader) {
+        int index = 0;
+        
+        for (int i = 0; i < headers.length; i++) { 
+            
+            if (headers[i].contains(aHeader)) {
+                index = i;
+                break;
+            }
+        }
+        
+        return index;
+    }
 
 }

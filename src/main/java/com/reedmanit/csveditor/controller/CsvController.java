@@ -358,13 +358,28 @@ public class CsvController implements Initializable {
         tableView.getSelectionModel().selectedItemProperty().addListener(
                 new RowSelectChangeListener());
 
+        Util u = new Util();
         
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                Util u = new Util();
+                int pos = 0;
+                int indexOfHeader = 0;
                 
-                int pos = u.findPosition(tableView.getItems(), findTF.getText());
+                boolean allColumns = false;
+                
+                String selectedItem = (String) colCB.getSelectionModel().getSelectedItem();
+                
+                if (selectedItem.equals("Any Column")) allColumns = true;
+                
+                if (allColumns) {
+                    pos = u.findPositionInAllCols(tableView.getItems(), findTF.getText());
+                } else {
+                    indexOfHeader = dataCache.indexOfHeader(selectedItem);
+                    pos = u.findPositionInCol(tableView.getItems(), findTF.getText(), indexOfHeader);
+                }             
+                
+                
                 
                 System.out.println("Pos is " + pos);
                 System.out.println("Text is " + findTF.getText());
