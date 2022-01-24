@@ -387,6 +387,12 @@ public class CsvController implements Initializable {
 
                     tableView.scrollTo(pos - 1);
                     tableView.getFocusModel().focus(pos - 1);
+                } else {
+                    tableView.requestFocus();
+                    tableView.getSelectionModel().select(1);  // sit the focus at the first row
+
+                    tableView.scrollTo(pos - 1);
+                    tableView.getFocusModel().focus(1);
                 }
 
             }
