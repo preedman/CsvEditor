@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javafx.collections.ObservableList;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -59,20 +60,28 @@ public class Util {
             int rowColIndex = 0;
             while (rowIterator.hasNext()) {   // search through the row
                 String element = rowIterator.next();
-                if ((element.contains(target) && (rowColIndex == columnNumber))) { // if the target is there and its in the requested column
+                if ((StringUtils.containsIgnoreCase(element, target) && (rowColIndex == columnNumber))) {
                     found = true;
                     break;  // stop
                 } else {
                     rowColIndex++;
                 }
             }
+            //   if ((element.contains(target) && (rowColIndex == columnNumber))) { // if the target is there and its in the requested column
+            //       found = true;
+            //       break;  // stop
+            //    } else {
+            //        rowColIndex++;
+
             if (found) {
                 break;  // we found the first occurance of the item - lets stop
             }
         }
         System.out.println("Index is " + index);
-        
-        if (!found) index = 0;
+
+        if (!found) {
+            index = 0;
+        }
 
         return index;
 
@@ -96,7 +105,7 @@ public class Util {
             while (r.hasNext()) {
                 String s = (String) r.next();
 
-                if (s.contains(target)) {
+                if (StringUtils.containsIgnoreCase(s, target)) {
                     System.out.println("Found " + s);
                     found = true;
                     break;
@@ -108,9 +117,11 @@ public class Util {
 
         }
         System.out.println("Index is " + index);
-        
-        if (!found) index = 0;
-        
+
+        if (!found) {
+            index = 0;
+        }
+
         return index;
 
     }
