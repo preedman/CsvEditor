@@ -5,20 +5,64 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 
 <BorderPane fx:id="borderPaneLayout" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="736.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.reedmanit.csveditor.controller.CsvController">
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-            <Button fx:id="openFileBT" mnemonicParsing="false" onAction="#openFile" text="Open File" />
-            <Button fx:id="saveBT" mnemonicParsing="false" onAction="#saveFile" text="Save File" />
-          <Button fx:id="insertRowBT" disable="true" mnemonicParsing="false" text="Insert" />
-            <Button fx:id="deleteRowBT" disable="true" mnemonicParsing="false" text="Delete" />
+            <Button fx:id="openFileBT" defaultButton="true" mnemonicParsing="false" onAction="#openFile" text="Open File">
+               <graphic>
+                  <ImageView fitHeight="18.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../style/open-file_40455.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+            <Button fx:id="saveBT" defaultButton="true" mnemonicParsing="false" onAction="#saveFile" text="Save File">
+               <graphic>
+                  <ImageView fitHeight="19.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../style/Save_37110.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+          <Button fx:id="insertRowBT" disable="true" mnemonicParsing="false" text="Insert">
+               <graphic>
+                  <ImageView fitHeight="19.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../style/Plus_36851.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+            <Button fx:id="deleteRowBT" disable="true" mnemonicParsing="false" text="Delete">
+               <graphic>
+                  <ImageView fitHeight="19.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../style/vcsconflicting_93497.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
             <TextField fx:id="findTF" prefHeight="25.0" prefWidth="170.0" promptText="find what in ?" />
             <ComboBox fx:id="colCB" prefWidth="150.0" />
-            <Button fx:id="searchButton" mnemonicParsing="false" onAction="#searchForData" text="Search" />
-            <Button fx:id="aboutBT" mnemonicParsing="false" onAction="#about" text="About" />
+            <Button fx:id="searchButton" defaultButton="true" mnemonicParsing="false" onAction="#searchForData" text="Search">
+               <graphic>
+                  <ImageView fitHeight="19.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../style/search_find_lupa_21889.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+            <Button fx:id="aboutBT" defaultButton="true" mnemonicParsing="false" onAction="#about" text="About">
+               <graphic>
+                  <ImageView fitHeight="19.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../style/gui_about_icon_157266.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
         </items>
          <padding>
             <Insets left="20.0" />

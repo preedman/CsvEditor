@@ -15,8 +15,11 @@ import com.reedmanit.csveditor.data.Util;
 import com.reedmanit.csveditor.ui.rules.TurnOnSaveButton;
 import com.reedmanit.csveditor.ui.rules.TurnOnSearchButton;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,6 +59,8 @@ import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
@@ -140,7 +145,9 @@ public class CsvController implements Initializable {
         searchButton.setDisable(true);
         findTF.setDisable(true);
         colCB.setDisable(true);
+        
 
+      
         setUpRules();
 
         tsm = tableView.getSelectionModel();
@@ -185,6 +192,8 @@ public class CsvController implements Initializable {
         }
 
     }
+    
+    
 
     private void setUpRules() {
 
