@@ -65,6 +65,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.jeasy.rules.api.Fact;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rules;
@@ -145,55 +146,49 @@ public class CsvController implements Initializable {
         searchButton.setDisable(true);
         findTF.setDisable(true);
         colCB.setDisable(true);
-        
 
-      
         setUpRules();
 
         tsm = tableView.getSelectionModel();
         tsm.setSelectionMode(SelectionMode.SINGLE);
         tsm.setCellSelectionEnabled(true);
 
-   //    tableView.getStylesheets().add("/com/reedmanit/csveditor/style/csv.css");
-
+        //    tableView.getStylesheets().add("/com/reedmanit/csveditor/style/csv.css");
         openFileBT.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent e) {
                 try {
-                    openFile();   // open the file 
-                    tableView = dataCache.getTableView();  // get the table that was created by the cache
-                    tableView.setEditable(true);
-                    borderPaneLayout.setCenter(tableView);  // center it
+                    boolean fileOpen = openFile();   // open the file 
+                    if (fileOpen) {
+                        tableView = dataCache.getTableView();  // get the table that was created by the cache
+                        tableView.setEditable(true);
+                        borderPaneLayout.setCenter(tableView);  // center it
 
-                    Iterator i = tableView.getColumns().iterator();
+                        Iterator i = tableView.getColumns().iterator();
 
-                    while (i.hasNext()) {
-                        tc = (TableColumn) i.next();
-                        setUp(tc);  // for every column on the screen, set up the on edit function. Pass in the Table Column
+                        while (i.hasNext()) {
+                            tc = (TableColumn) i.next();
+                            setUp(tc);  // for every column on the screen, set up the on edit function. Pass in the Table Column
+                        }
                     }
 
                 } catch (IOException ex) {
                     System.out.println(ex.getMessage());
 
                 } catch (CsvValidationException ex) {
-                    Logger.getLogger(CsvController.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println(ex.toString());
                 }
             }
         });
 
-        ObservableList<TablePosition> s = tsm.getSelectedCells();
-
-        Iterator i = s.iterator();
-
-        while (i.hasNext()) {
-            TablePosition p = (TablePosition) i.next();
-            System.out.println(p.getColumn());
-        }
-
+        //    ObservableList<TablePosition> s = tsm.getSelectedCells();
+        //     Iterator i = s.iterator();
+        //     while (i.hasNext()) {
+        //          TablePosition p = (TablePosition) i.next();
+        //          System.out.println(p.getColumn());
+        //      }
     }
-    
-    
 
     private void setUpRules() {
 
@@ -243,7 +238,9 @@ public class CsvController implements Initializable {
 
     }
 
-    public void openFile() throws IOException, CsvValidationException {
+    public boolean openFile() throws IOException, CsvValidationException {
+
+        boolean fileOpen = false;
 
         System.out.println("File Open");
 
@@ -274,6 +271,7 @@ public class CsvController implements Initializable {
                 if (turnOnSearchButton.isTurnOnSearchButton()) {
                     setUpSearch();
                 }
+                fileOpen = true;
             } catch (IOException ioe) {
                 throw ioe;
             } catch (CsvValidationException ve) {
@@ -281,6 +279,7 @@ public class CsvController implements Initializable {
             }
 
         }
+        return fileOpen;
 
     }
 
@@ -315,7 +314,7 @@ public class CsvController implements Initializable {
 
             dataCache = new CsvCache(theCSVFile);
             dataCache.buildData();
-            facts.put("Headers", Arrays.asList(dataCache.getHeaders()));
+            facts.put("Headers", Arrays.asList(dataCache.getHeaders()));  // put the headers in the rule for validation
 
             rulesEngine.fire(rules, facts);
 
@@ -350,7 +349,7 @@ public class CsvController implements Initializable {
 
     @FXML
     private void about() {
-        Alert a = new Alert(AlertType.INFORMATION, "Simple CSV Editor. By ReedmanIT");
+        Alert a = new Alert(AlertType.INFORMATION, "Simple CSV Editor. Version 0.6. BETA Release. By ReedmanIT");
 
         a.showAndWait();
 
@@ -366,6 +365,8 @@ public class CsvController implements Initializable {
 
         Util u = new Util();
 
+        
+
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -374,36 +375,47 @@ public class CsvController implements Initializable {
 
                 boolean allColumns = false;
 
-                String selectedItem = (String) colCB.getSelectionModel().getSelectedItem();
+                String selectedItem = (String) colCB.getSelectionModel().getSelectedItem();  // get the selected item from the combo box
 
-                if (selectedItem.equals("Any Column")) {
-                    allColumns = true;
-                }
+                boolean emptySearchTerm = StringUtils.isAllEmpty(findTF.getText());
 
-                if (allColumns) {
-                    pos = u.findPositionInAllCols(tableView.getItems(), findTF.getText());
+                if (!emptySearchTerm) {  // user needs to enter something to find
+
+                    if (selectedItem.equals("Any Column")) {
+                        allColumns = true;
+                    }
+
+                    if (allColumns) {
+                        pos = u.findPositionInAllCols(tableView.getItems(), findTF.getText());
+                    } else {
+                        indexOfHeader = dataCache.indexOfHeader(selectedItem);   // which header
+                        pos = u.findPositionInCol(tableView.getItems(), findTF.getText(), indexOfHeader);
+                    }
+
+                    
+
+                    if (pos > 0) {  // search item found
+                        tableView.requestFocus();
+                        tableView.getSelectionModel().select(pos - 1);  // the header is first in row, compensate
+
+                        tableView.scrollTo(pos - 1);
+                        tableView.getFocusModel().focus(pos - 1);
+                    } else {
+
+                        Alert a = new Alert(AlertType.WARNING, "Search item " + findTF.getText() + " not found");
+                        a.showAndWait();
+
+                        tableView.requestFocus();
+                        tableView.getSelectionModel().select(0);  // sit the focus at the first row
+
+                        tableView.scrollTo(0);
+                        tableView.getFocusModel().focus(0);
+                    }
+
                 } else {
-                    indexOfHeader = dataCache.indexOfHeader(selectedItem);
-                    pos = u.findPositionInCol(tableView.getItems(), findTF.getText(), indexOfHeader);
+                    Alert a = new Alert(AlertType.WARNING, "Must enter value for search");
+                    a.showAndWait();
                 }
-
-                System.out.println("Pos is " + pos);
-                System.out.println("Text is " + findTF.getText());
-
-                if (pos > 0) {  // search item found
-                    tableView.requestFocus();
-                    tableView.getSelectionModel().select(pos - 1);  // the header is first in row, compensate
-
-                    tableView.scrollTo(pos - 1);
-                    tableView.getFocusModel().focus(pos - 1);
-                } else {
-                    tableView.requestFocus();
-                    tableView.getSelectionModel().select(1);  // sit the focus at the first row
-
-                    tableView.scrollTo(pos - 1);
-                    tableView.getFocusModel().focus(1);
-                }
-
             }
         });
 
