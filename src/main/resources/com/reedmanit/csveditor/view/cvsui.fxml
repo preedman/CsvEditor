@@ -29,7 +29,7 @@
                      </image>
                   </ImageView>
                </graphic></Button>
-          <Button fx:id="insertRowBT" disable="true" mnemonicParsing="false" text="Insert">
+          <Button fx:id="insertRowBT" mnemonicParsing="false" onAction="#insertRow" text="Insert">
                <graphic>
                   <ImageView fitHeight="19.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -37,7 +37,7 @@
                      </image>
                   </ImageView>
                </graphic></Button>
-            <Button fx:id="deleteRowBT" disable="true" mnemonicParsing="false" text="Delete">
+            <Button fx:id="deleteRowBT" mnemonicParsing="false" onAction="#deleteRow" text="Delete">
                <graphic>
                   <ImageView fitHeight="19.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                      <image>

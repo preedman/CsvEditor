@@ -11,6 +11,7 @@ import com.reedmanit.csveditor.data.CsvCache;
 import com.reedmanit.csveditor.ui.rules.ExitWithOutSave;
 import com.reedmanit.csveditor.business.rules.FileSizeLimit;
 import com.reedmanit.csveditor.business.rules.ValidHeaders;
+import com.reedmanit.csveditor.data.SearchItem;
 import com.reedmanit.csveditor.data.Util;
 import com.reedmanit.csveditor.ui.rules.TurnOnSaveButton;
 import com.reedmanit.csveditor.ui.rules.TurnOnSearchButton;
@@ -30,9 +31,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -138,6 +141,12 @@ public class CsvController implements Initializable {
     private TextInputDialog searchDialog;
 
     private ObservableList<String> cbData = FXCollections.<String>observableArrayList();
+    
+    private Stack<SearchItem> selectedItems;
+    
+   private static int pos = 0;
+    
+    
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -146,6 +155,10 @@ public class CsvController implements Initializable {
         searchButton.setDisable(true);
         findTF.setDisable(true);
         colCB.setDisable(true);
+        insertRowBT.setDisable(true);
+        deleteRowBT.setDisable(true);
+        
+        selectedItems = new Stack<SearchItem>();
 
         setUpRules();
 
@@ -164,6 +177,9 @@ public class CsvController implements Initializable {
                         tableView = dataCache.getTableView();  // get the table that was created by the cache
                         tableView.setEditable(true);
                         borderPaneLayout.setCenter(tableView);  // center it
+                        insertRowBT.setDisable(false);
+                        deleteRowBT.setDisable(false);
+                        //                      tableView.getSelectionModel().cellSelectionEnabledProperty().set(true);   // set cell selection
 
                         Iterator i = tableView.getColumns().iterator();
 
@@ -356,26 +372,74 @@ public class CsvController implements Initializable {
     }
 
     @FXML
+    private void deleteRow(ActionEvent event) {
+
+        tsm = tableView.getSelectionModel();
+
+        if (tsm.isEmpty()) {
+            Alert a = new Alert(AlertType.ERROR, "Please select a row to delete");
+            a.showAndWait();
+
+            return;
+        }
+
+        tableView.getItems().remove(tsm.getSelectedIndex());
+        
+        if (saveBT.isDisabled()) {
+            saveBT.setDisable(false);
+        }
+
+    }
+
+    @FXML
+    private void insertRow(ActionEvent event) {
+        System.out.println("Insert new row");
+
+        int idx = tableView.getSelectionModel().getSelectedIndex() + 1;
+        ObservableList<String> aNewRow = FXCollections.<String>observableArrayList();
+
+        for (int i = 0; i < dataCache.getHeaders().length; i++) {
+            aNewRow.add("NEW");
+
+        }
+
+        tableView.getItems().add(idx, aNewRow);
+
+        tableView.getSelectionModel().select(idx);
+        tableView.edit(idx, tableView.getColumns().get(0));
+        
+        if (saveBT.isDisabled()) {
+            saveBT.setDisable(false);
+        }
+
+    }
+
+    @FXML
     private void searchForData(ActionEvent event) throws IOException {
 
         System.out.println("Search");
+        
+        
+        
+        
 
         tableView.getSelectionModel().selectedItemProperty().addListener(
                 new RowSelectChangeListener());
 
         Util u = new Util();
 
-        
-
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                int pos = 0;
+               // int pos = 0;
                 int indexOfHeader = 0;
+                String selectedItem = null;
 
                 boolean allColumns = false;
 
-                String selectedItem = (String) colCB.getSelectionModel().getSelectedItem();  // get the selected item from the combo box
+                selectedItem = (String) colCB.getSelectionModel().getSelectedItem();  // get the selected item from the combo box
+                
+                
 
                 boolean emptySearchTerm = StringUtils.isAllEmpty(findTF.getText());
 
@@ -386,13 +450,11 @@ public class CsvController implements Initializable {
                     }
 
                     if (allColumns) {
-                        pos = u.findPositionInAllCols(tableView.getItems(), findTF.getText());
+                        pos = u.findPositionInAllCols(tableView.getItems(), findTF.getText(), pos);
                     } else {
                         indexOfHeader = dataCache.indexOfHeader(selectedItem);   // which header
-                        pos = u.findPositionInCol(tableView.getItems(), findTF.getText(), indexOfHeader);
+                        pos = u.findPositionInCol(tableView.getItems(), findTF.getText(), indexOfHeader, pos);
                     }
-
-                    
 
                     if (pos > 0) {  // search item found
                         tableView.requestFocus();
@@ -400,6 +462,12 @@ public class CsvController implements Initializable {
 
                         tableView.scrollTo(pos - 1);
                         tableView.getFocusModel().focus(pos - 1);
+                        
+                        
+                        selectedItems.push(new SearchItem(findTF.getText(), pos));
+                        
+                        System.out.println("Audit " + findTF.getText() + " " + pos);
+                        
                     } else {
 
                         Alert a = new Alert(AlertType.WARNING, "Search item " + findTF.getText() + " not found");
