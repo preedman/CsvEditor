@@ -4,7 +4,7 @@
   <groupId>com.reedmanit</groupId>
   <artifactId>CsvEditor</artifactId>
   <name>CsvEditor</name>
-  <version>0.7</version>
+  <version>0.8</version>
   <build>
     <plugins>
       <plugin>
@@ -27,7 +27,7 @@
           </execution>
         </executions>
         <configuration>
-          <mainClass>com.reedmanit.cvseditor.app.Launcher</mainClass>
+          <mainClass>com.reedmanit.csveditor.app.Launcher</mainClass>
         </configuration>
       </plugin>
       <plugin>

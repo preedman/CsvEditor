@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.reedmanit</groupId>
     <artifactId>CsvEditor</artifactId>
-    <version>0.7</version>
+    <version>0.8</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -13,6 +13,12 @@
     </properties>
     
     <dependencies>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+ 
+        </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
@@ -135,7 +141,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>com.reedmanit.cvseditor.app.Launcher</mainClass>
+                    <mainClass>com.reedmanit.csveditor.app.Launcher</mainClass>
                 </configuration>
             </plugin>
 
