@@ -1,0 +1,34 @@
+2022-07-05 11:27:57 INFO  CsvController:160 - Starting controller
+2022-07-05 11:27:57 INFO  CsvController:214 - Entering Set Up Rules
+2022-07-05 11:27:57 INFO  CsvController:250 - Exit Set Up Rules
+2022-07-05 11:27:57 INFO  CsvController:209 - Exit Controller
+2022-07-05 11:27:59 INFO  CsvController:269 - Enter Open File
+2022-07-05 11:28:02 INFO  CsvController:341 - Enter process csv file
+2022-07-05 11:28:02 INFO  CsvController:376 - Enter file size exceeds limit
+2022-07-05 11:28:02 INFO  CsvController:392 - Exit file size exceeds limit
+2022-07-05 11:28:03 INFO  CsvController:371 - Exit Process CSV file
+2022-07-05 11:28:03 INFO  CsvController:319 - Enter set up search
+2022-07-05 11:28:03 INFO  CsvController:336 - Exit set up search
+2022-07-05 11:28:03 INFO  CsvController:312 - Exit Open File
+2022-07-05 11:28:03 INFO  CsvController:256 - Enter SetUp ﻿OBJECTID
+2022-07-05 11:28:03 INFO  CsvController:264 - Exit SetUp
+2022-07-05 11:28:03 INFO  CsvController:256 - Enter SetUp PLANT_STRUCTURE_NUMBER
+2022-07-05 11:28:03 INFO  CsvController:264 - Exit SetUp
+2022-07-05 11:28:03 INFO  CsvController:256 - Enter SetUp TRAFFIC_TYPES_DESCRIPTION
+2022-07-05 11:28:03 INFO  CsvController:264 - Exit SetUp
+2022-07-05 11:28:03 INFO  CsvController:256 - Enter SetUp SECTION_TYPES_DESCRIPTION
+2022-07-05 11:28:03 INFO  CsvController:264 - Exit SetUp
+2022-07-05 11:28:03 INFO  CsvController:256 - Enter SetUp LOCATIONS_DESCRIPTION
+2022-07-05 11:28:03 INFO  CsvController:264 - Exit SetUp
+2022-07-05 11:28:03 INFO  CsvController:256 - Enter SetUp BIKEWAY_ON_OFF_ROAD_DESC
+2022-07-05 11:28:03 INFO  CsvController:264 - Exit SetUp
+2022-07-05 11:28:03 INFO  CsvController:256 - Enter SetUp BIKEWAY_WIDTH
+2022-07-05 11:28:03 INFO  CsvController:264 - Exit SetUp
+2022-07-05 11:28:03 INFO  CsvController:256 - Enter SetUp STREET_NAME
+2022-07-05 11:28:03 INFO  CsvController:264 - Exit SetUp
+2022-07-05 11:28:03 INFO  CsvController:256 - Enter SetUp SUBURB
+2022-07-05 11:28:03 INFO  CsvController:264 - Exit SetUp
+2022-07-05 11:28:03 INFO  CsvController:256 - Enter SetUp OWNER
+2022-07-05 11:28:03 INFO  CsvController:264 - Exit SetUp
+2022-07-05 11:28:03 INFO  CsvController:256 - Enter SetUp SHAPE_Length
+2022-07-05 11:28:03 INFO  CsvController:264 - Exit SetUp
