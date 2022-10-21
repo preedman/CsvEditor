@@ -15,6 +15,8 @@
  */
 package com.reedmanit.csveditor.business.rules;
 
+import com.reedmanit.csveditor.ui.rules.ExitWithOutSave;
+import org.apache.log4j.LogManager;
 import org.jeasy.rules.api.Fact;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
@@ -24,6 +26,10 @@ import org.jeasy.rules.api.Rule;
  * @author preed
  */
 public class FileSizeLimit implements Rule {
+    
+    protected static final org.apache.log4j.Logger fileSizeLimitLogger = LogManager.getLogger(FileSizeLimit.class.getName());
+
+    private static org.apache.log4j.Logger logger = fileSizeLimitLogger;
     
     private boolean showAlert;
     
@@ -50,6 +56,8 @@ public class FileSizeLimit implements Rule {
     @Override
     public boolean evaluate(Facts facts) {
         
+        logger.info("Entering Evaluate");
+        
         boolean b = false;
         
         Fact fileSize = facts.getFact("FileSize");
@@ -61,12 +69,17 @@ public class FileSizeLimit implements Rule {
         } else {
             b = false;
         }
+        
+        logger.info("Exit Evaluate");
+        
         return b;
     }
 
     @Override
     public void execute(Facts facts) throws Exception {
+        logger.info("Enter execute");
         setShowAlert(true);
+        logger.info("Exit excecute");
     }
 
     @Override

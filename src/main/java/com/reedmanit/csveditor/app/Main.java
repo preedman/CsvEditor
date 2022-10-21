@@ -16,6 +16,7 @@
 package com.reedmanit.csveditor.app;
 
 
+import com.reedmanit.csveditor.controller.CsvController;
 import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -33,6 +34,8 @@ public class Main extends Application {
     private static Scene scene;
 
     private static Stage theStage;
+    
+    private static CsvController theController;
 
    
     
@@ -52,6 +55,10 @@ public class Main extends Application {
     //   scene.getStylesheets().add(getClass().getResource("/com/reedmanit/csveditor/style/csv.css").toExternalForm());
         
         stage.setScene(scene);
+        
+        theController = fxmlLoader.getController();
+        
+        theController.setTheStage(theStage);
 
        
 

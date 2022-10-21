@@ -15,6 +15,8 @@
  */
 package com.reedmanit.csveditor.ui.rules;
 
+import com.reedmanit.csveditor.controller.CsvController;
+import org.apache.log4j.LogManager;
 import org.jeasy.rules.api.Fact;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
@@ -24,6 +26,10 @@ import org.jeasy.rules.api.Rule;
  * @author preed
  */
 public class ExitWithOutSave implements Rule {
+    
+    protected static final org.apache.log4j.Logger exitWithOutSaveLogger = LogManager.getLogger(ExitWithOutSave.class.getName());
+
+    private static org.apache.log4j.Logger logger = exitWithOutSaveLogger;
     
     private boolean showAlert = false;
 
@@ -45,7 +51,9 @@ public class ExitWithOutSave implements Rule {
     @Override
     public boolean evaluate(Facts facts) {
         
-        System.out.println("Exit with out saving");
+        exitWithOutSaveLogger.info("Entering evaluate");
+        
+       
         
         boolean b = false;
         
@@ -53,12 +61,14 @@ public class ExitWithOutSave implements Rule {
         Fact editOccured = facts.getFact("EditOccured");
         
     
+        exitWithOutSaveLogger.info("edit occured " + editOccured.toString());
+        exitWithOutSaveLogger.info("file open " + fileOpen.toString());
         
-        System.out.println("edit occurred " + editOccured.toString());
-        System.out.println("file open " + fileOpen.toString());
+        
         
         b = editOccured.getValue().equals("TRUE") && (fileOpen.getValue().equals("TRUE"));
         
+        exitWithOutSaveLogger.info("Exit evaluate");
     
         
         return b;
@@ -66,7 +76,9 @@ public class ExitWithOutSave implements Rule {
 
     @Override
     public void execute(Facts facts) throws Exception {
+        exitWithOutSaveLogger.info("Entering execute");
         setShowAlert(true);
+        exitWithOutSaveLogger.info("Exit execute");
     }
 
     @Override

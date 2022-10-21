@@ -16,6 +16,7 @@
 package com.reedmanit.csveditor.ui.rules;
 
 import javafx.scene.control.Button;
+import org.apache.log4j.LogManager;
 import org.jeasy.rules.api.Fact;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
@@ -28,6 +29,9 @@ public class TurnOnSearchButton implements Rule {
     
     private Button searchButton;
     private boolean turnOnSearchButton = false;
+    protected static final org.apache.log4j.Logger turnOnSearchButtonLogger = LogManager.getLogger(TurnOnSearchButton.class.getName());
+
+    private static org.apache.log4j.Logger logger = turnOnSearchButtonLogger;
 
     @Override
     public String getName() {
@@ -47,7 +51,8 @@ public class TurnOnSearchButton implements Rule {
     @Override
     public boolean evaluate(Facts facts) {
        
-        System.out.println("Turn on Search Button");
+        
+        turnOnSearchButtonLogger.info("Enter evaluate");
         
         boolean b = false;
         
@@ -58,6 +63,7 @@ public class TurnOnSearchButton implements Rule {
         } else {
             b = false;
         }
+        turnOnSearchButtonLogger.info("Exit evaluate");
         return b;
         
        
@@ -65,7 +71,9 @@ public class TurnOnSearchButton implements Rule {
 
     @Override
     public void execute(Facts facts) throws Exception {
+         turnOnSearchButtonLogger.info("Enter execute");
         setTurnOnSearchButton(true);
+         turnOnSearchButtonLogger.info("Exit evaluate");
     }
 
     @Override

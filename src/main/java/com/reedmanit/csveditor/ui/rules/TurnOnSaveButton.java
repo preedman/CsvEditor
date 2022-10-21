@@ -15,8 +15,10 @@
  */
 package com.reedmanit.csveditor.ui.rules;
 
+import com.reedmanit.csveditor.controller.CsvController;
 import java.lang.annotation.Annotation;
 import javafx.scene.control.Button;
+import org.apache.log4j.LogManager;
 import org.jeasy.rules.annotation.Action;
 //import org.jeasy.rules.annotation.Fact;
 //import org.jeasy.rules.annotation.Rule;
@@ -32,6 +34,10 @@ import org.jeasy.rules.api.Fact;
 public class TurnOnSaveButton implements Rule  {
     
     private Button saveButton;
+    
+    protected static final org.apache.log4j.Logger turnOnSaveButtonLogger = LogManager.getLogger(TurnOnSaveButton.class.getName());
+
+    private static org.apache.log4j.Logger logger = turnOnSaveButtonLogger;
     
    
 
@@ -53,7 +59,8 @@ public class TurnOnSaveButton implements Rule  {
     @Override
     public boolean evaluate(Facts facts) {
         
-        System.out.println("evaluate");
+        turnOnSaveButtonLogger.info("Entering evaluate");
+        
         
         boolean b = false;
         
@@ -62,14 +69,16 @@ public class TurnOnSaveButton implements Rule  {
         if (stateOfOpenButton.getValue().equals("ENABLE") && (saveButton.isDisabled())) {
            
             b = true;
+            turnOnSaveButtonLogger.info("Turn on save button");
          
         } 
         
         if (stateOfOpenButton.getValue().equals("DISABLE") && (!saveButton.isDisabled())) {
            b = true;
+           turnOnSaveButtonLogger.info("Turn on save button");
          
         } 
-        
+        turnOnSaveButtonLogger.info("Exit evaluate");
         
         
         return b;
@@ -81,7 +90,8 @@ public class TurnOnSaveButton implements Rule  {
     @Override
     public void execute(Facts facts) throws Exception {
         
-        System.out.println("execute");
+        
+        turnOnSaveButtonLogger.info("Entering execute");
         
         Fact stateOfOpenButton = (Fact) facts.getFact("OpenButtonState");
         
@@ -93,7 +103,7 @@ public class TurnOnSaveButton implements Rule  {
             saveButton.setDisable(true);
         } 
         
-        
+         turnOnSaveButtonLogger.info("Exit execute");
         
         
         
