@@ -72,7 +72,7 @@ public class ValidHeaders implements Rule {
             String value = i.next();
             b = containsADateTime(value);
             if (!b) {   // so, the data does not contain a date
-                b = NumberUtils.isParsable(value);   // it true, then the data contains a number
+                b = NumberUtils.isParsable(value);   // if true, then the data contains a number
             }
             if (b) {  // so lets stop
                 break;
@@ -97,7 +97,7 @@ public class ValidHeaders implements Rule {
         boolean b = true;
         
         String[] parsePatterns = new String[] { "dd/MM/YY" , "dd/MM/yyyy" , "dd-MM-yyyy" , "dd-MM-yy", "MM/dd/YY", "MM/dd/yyyy",
-                                              "MM-dd-yyyy", "MM-dd-yy"  };
+                                              "MM-dd-yyyy", "MM-dd-yy", "dd-M-yyyy hh:mm:ss" , "dd MMMM yyyy" , "dd MMMM yyyy zzzz"  };
         
         try {
             DateUtils.parseDate(data, parsePatterns);

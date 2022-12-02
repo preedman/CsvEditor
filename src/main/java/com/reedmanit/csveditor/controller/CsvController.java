@@ -14,6 +14,7 @@ import com.reedmanit.csveditor.business.rules.ValidHeaders;
 import com.reedmanit.csveditor.data.SearchItem;
 import com.reedmanit.csveditor.data.Util;
 
+
 import com.reedmanit.csveditor.ui.rules.TurnOnSaveButton;
 import com.reedmanit.csveditor.ui.rules.TurnOnSearchButton;
 import java.io.File;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Stack;
@@ -48,11 +50,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollToEvent;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
@@ -92,6 +96,12 @@ public class CsvController implements Initializable {
     private static org.apache.log4j.Logger logger = csvControllerLogger;
 
     private Stage theStage; // see main for setting - used for file name
+    
+    private Stage insertFormScreen;
+    
+    private InsertController theInsertController;
+    
+ 
 
     @FXML
     private BorderPane borderPaneLayout;
@@ -158,6 +168,8 @@ public class CsvController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
 
         logger.info("Starting controller");
+        
+        
 
         saveBT.setDisable(true);
         searchButton.setDisable(true);
@@ -176,34 +188,31 @@ public class CsvController implements Initializable {
         tsm.setCellSelectionEnabled(true);
 
         
-        openFileBT.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent e) {
-                try {
-                    boolean fileOpen = openFile();   // open the file 
-                    if (fileOpen) {
-                        tableView = dataCache.getTableView();  // get the table that was created by the cache
-                        tableView.setEditable(true);
-                        borderPaneLayout.setCenter(tableView);  // center it
-                        insertRowBT.setDisable(false);
-                        deleteRowBT.setDisable(false);
-                        
-
-                        Iterator i = tableView.getColumns().iterator();
-
-                        while (i.hasNext()) {
-                            tc = (TableColumn) i.next();
-                            setUp(tc);  // for every column on the screen, set up the on edit function. Pass in the Table Column
-                        }
+        openFileBT.setOnAction((ActionEvent e) -> {
+            try {
+                boolean fileOpen = openFile();   // open the file
+                if (fileOpen) {
+                    
+                    tableView = dataCache.getTableView();  // get the table that was created by the cache
+                    tableView.setEditable(true);
+                    borderPaneLayout.setCenter(tableView);  // center it
+                    insertRowBT.setDisable(false);
+                    deleteRowBT.setDisable(false);
+                    
+                    
+                    Iterator i = tableView.getColumns().iterator();
+                    
+                    while (i.hasNext()) {
+                        tc = (TableColumn) i.next();
+                        setUp(tc);  // for every column on the screen, set up the on edit function. Pass in the Table Column
                     }
-
-                } catch (IOException ex) {
-                    System.out.println(ex.getMessage());
-
-                } catch (CsvValidationException ex) {
-                    System.out.println(ex.toString());
                 }
+                
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
+                
+            } catch (CsvValidationException ex) {
+                System.out.println(ex.toString());
             }
         });
 
@@ -268,6 +277,8 @@ public class CsvController implements Initializable {
     public boolean openFile() throws IOException, CsvValidationException {
 
         logger.info("Enter Open File");
+        
+       
 
         boolean fileOpen = false;
 
@@ -427,6 +438,93 @@ public class CsvController implements Initializable {
         logger.info("Exit delete row");
 
     }
+    
+    @FXML
+    private void insertForm(ActionEvent event) throws IOException {
+        
+        //Create Stage
+        insertFormScreen = new Stage();
+        insertFormScreen.setTitle("Insert Form");
+        
+        ArrayList<Label> labels = new ArrayList<Label>();
+        ArrayList<TextField> textFields = new ArrayList<TextField>();
+        
+        ObservableList<TableColumn<ObservableList, ?>> tableColumns = tableView.getColumns();
+        Iterator<TableColumn<ObservableList, ?>> i = tableColumns.iterator();
+        
+        while (i.hasNext()) {
+           TableColumn t = i.next();
+           labels.add(new Label(t.getText()));
+           textFields.add(new TextField());
+           
+        }
+///
+///
+        
+  ////      
+
+//Create view from FXML
+        FXMLLoader loader = new FXMLLoader(CsvController.class.getResource("/com/reedmanit/csveditor/view/insert.fxml"));
+
+        Parent parent = loader.load();
+
+        Scene scene = new Scene(parent);
+
+        theInsertController = loader.<InsertController>getController();
+
+        theInsertController.setCSVController(CsvController.this);
+        
+        try {
+            theInsertController.createInsertForm(labels, textFields);
+        } catch (Exception ex) {
+            logger.equals(ex.toString());
+        }
+
+        
+//Set view in window
+        insertFormScreen.setScene(scene);
+
+//Launch
+        insertFormScreen.showAndWait();
+        
+        extractFieldsFromForm();
+       
+       
+       
+       
+        
+        logger.info("Exit Insert Form");
+    }
+    
+    private void extractFieldsFromForm() {
+        
+        logger.info("Enter Extract Fields from Form");
+        
+        List<TextField> newRow = theInsertController.getTheInsertForm().getTextFields();
+       
+        var r = newRow.listIterator();
+        
+           
+        int idx = tableView.getItems().size();     // find the last row
+
+        ObservableList<String> aNewRow = FXCollections.<String>observableArrayList();  // create a new row of data
+       
+        while (r.hasNext()) {
+            TextField tf = r.next();
+            aNewRow.add(tf.getText());
+        }
+        
+        tableView.getItems().add(idx, aNewRow);  // add the new row to the TableView
+
+        tableView.getSelectionModel().select(idx);  // select the new row
+       // tableView.edit(idx, tableView.getColumns().get(0));  // set as edit
+        tableView.scrollTo(idx);  // scroll to the new row
+        
+        logger.info("Leave extract fields from Form");
+        
+    }
+    
+    
 
     @FXML
     private void insertRow(ActionEvent event) {
@@ -626,6 +724,10 @@ public class CsvController implements Initializable {
      */
     public void setTheStage(Stage theStage) {
         this.theStage = theStage;
+    }
+    
+    public Stage getInsertFormStage() {
+        return insertFormScreen;
     }
 
 }

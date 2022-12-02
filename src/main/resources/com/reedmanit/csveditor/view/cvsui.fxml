@@ -29,7 +29,7 @@
                      </image>
                   </ImageView>
                </graphic></Button>
-          <Button fx:id="insertRowBT" mnemonicParsing="false" onAction="#insertRow" text="Insert">
+          <Button fx:id="insertRowBT" mnemonicParsing="false" onAction="#insertForm" text="Insert">
                <graphic>
                   <ImageView fitHeight="19.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                      <image>
