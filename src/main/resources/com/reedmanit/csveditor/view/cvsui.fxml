@@ -45,6 +45,15 @@
                      </image>
                   </ImageView>
                </graphic></Button>
+            <Button fx:id="editRowBT" mnemonicParsing="false" onAction="#editForm" text="Edit">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="17.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../style/pencil.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             <TextField fx:id="findTF" prefHeight="25.0" prefWidth="170.0" promptText="find what in ?" />
             <ComboBox fx:id="colCB" prefWidth="150.0" />
             <Button fx:id="searchButton" defaultButton="true" mnemonicParsing="false" onAction="#searchForData" text="Search">

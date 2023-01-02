@@ -42,11 +42,14 @@ public class InsertForm {
     
     private Button cancelButton;
     
+    private String actionPerformed;
+    
    
     
     
     public InsertForm(List<Label> labels, List<TextField> textFields) throws Exception {
         
+        actionPerformed = new String();
         formLabels = labels;
         formTextFields = textFields;
         
@@ -123,4 +126,11 @@ public class InsertForm {
         return formTextFields;
     }
     
+    public String getActionPerformed() {
+        return actionPerformed;
+    }
+    
+    public void setActionPerformed(String theAction) {
+        actionPerformed = theAction;
+    }
 }

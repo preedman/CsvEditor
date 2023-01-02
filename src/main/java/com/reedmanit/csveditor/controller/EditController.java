@@ -15,12 +15,11 @@
  */
 package com.reedmanit.csveditor.controller;
 
+import com.reedmanit.csveditor.userinterface.EditForm;
 import com.reedmanit.csveditor.userinterface.InsertForm;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-import javafx.event.ActionEvent;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -35,43 +34,39 @@ import javafx.stage.Stage;
 import org.apache.log4j.LogManager;
 
 /**
- * FXML Controller class
  *
  * @author preed
  */
-public class InsertController implements Initializable {
+public class EditController implements Initializable {
 
-    /**
-     * Initializes the controller class.
-     */
-    private InsertForm theInsertForm;
+    protected static final org.apache.log4j.Logger editControllerLogger = LogManager.getLogger(EditController.class.getName());
 
-    protected static final org.apache.log4j.Logger insertControllerLogger = LogManager.getLogger(InsertController.class.getName());
-
-    private static org.apache.log4j.Logger logger = insertControllerLogger;
+    private static org.apache.log4j.Logger logger = editControllerLogger;
 
     private CsvController csvController;
+    
+    private EditForm editForm;
+    
+    private String action;
 
     @FXML
-    private BorderPane insertBorderPane;
-
+    private BorderPane editBorderPane;
+    
     @FXML
     private ScrollPane scrollPane;
 
     @FXML
     AnchorPane anchorPane;
-
+    
     private Button submitBtn;
-
+    
     private Button cancelBtn;
-
-    private static String actionPerformed = new String();
+    
+    private EditForm theEditForm;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
-        logger.info("Enter Initialise");
-
+        
         // Create the right child node
         submitBtn = new Button("Submit");
         cancelBtn = new Button("Cancel");
@@ -80,68 +75,62 @@ public class InsertController implements Initializable {
         submitBtn.setMaxWidth(Double.MAX_VALUE);
         cancelBtn.setMaxWidth(Double.MAX_VALUE);
 
-        actionPerformed = "";
+        action = "";
+       
 
         submitBtn.setOnAction(((var e) -> {
 
-            actionPerformed = "Submit";
+           
+            action = "submit";
+            Stage editStage = csvController.getEditFormStage();
 
-            Stage insertStage = csvController.getInsertFormStage();
-
-            insertStage.close();
+            editStage.close();
 
         }));
 
         cancelBtn.setOnAction(((var e) -> {
 
-            actionPerformed = "Cancel";
-            Stage insertStage = csvController.getInsertFormStage();
-            insertStage.close();
+            action = "cancel";
+            Stage editStage = csvController.getEditFormStage();
+            editStage.close();
         }));
 
-        logger.info("Exit initialise");
-
     }
+    
+    public void createEditForm(List<Label> labels, List<TextField> textFields) throws Exception {
 
-    public void createInsertForm(List<Label> labels, List<TextField> textFields) throws Exception {
-
-        logger.info("Enter create Insert Form");
+        logger.info("Enter create Edit Form");
 
         try {
-            theInsertForm = new InsertForm(labels, textFields);
-            GridPane theGridPane = theInsertForm.getTheGridPane();
+            theEditForm = new EditForm(labels, textFields);
+            GridPane theGridPane = theEditForm.getGridPane();
 
-            insertBorderPane.setCenter(theGridPane);
+            editBorderPane.setCenter(theGridPane);
 
             VBox left = new VBox(submitBtn, cancelBtn);
-            insertBorderPane.setLeft(left);
+            editBorderPane.setLeft(left);
             left.setStyle("-fx-padding: 10;");
 
-            insertBorderPane.setStyle("-fx-background-color: lightgray;");
+            editBorderPane.setStyle("-fx-background-color: lightgray;");
 
         } catch (Exception ex) {
             logger.error(ex.toString());
             throw ex;
         }
 
-        logger.info("Exit create insert form");
+        logger.info("Exit create edit form");
 
     }
-
+    
     public void setCSVController(CsvController theController) {
         csvController = theController;
     }
-
-    public InsertForm getTheInsertForm() {
-        return theInsertForm;
+    
+    public String getAction() {
+        return action;
     }
-
-    public String getActionPerformed() {
-        return actionPerformed;
+    
+    public EditForm getTheEditForm() {
+        return theEditForm;
     }
-
-    public Button getSubmit() {
-        return submitBtn;
-    }
-
 }

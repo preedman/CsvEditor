@@ -14,7 +14,6 @@ import com.reedmanit.csveditor.business.rules.ValidHeaders;
 import com.reedmanit.csveditor.data.SearchItem;
 import com.reedmanit.csveditor.data.Util;
 
-
 import com.reedmanit.csveditor.ui.rules.TurnOnSaveButton;
 import com.reedmanit.csveditor.ui.rules.TurnOnSearchButton;
 import java.io.File;
@@ -96,12 +95,12 @@ public class CsvController implements Initializable {
     private static org.apache.log4j.Logger logger = csvControllerLogger;
 
     private Stage theStage; // see main for setting - used for file name
-    
+
     private Stage insertFormScreen;
-    
+
+    private Stage editFormScreen;
+
     private InsertController theInsertController;
-    
- 
 
     @FXML
     private BorderPane borderPaneLayout;
@@ -114,6 +113,9 @@ public class CsvController implements Initializable {
 
     @FXML
     private Button insertRowBT;
+
+    @FXML
+    private Button editRowBT;
 
     @FXML
     private Button deleteRowBT;
@@ -164,12 +166,12 @@ public class CsvController implements Initializable {
 
     private static int pos = 0;
 
+    private EditController theEditController;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
         logger.info("Starting controller");
-        
-        
 
         saveBT.setDisable(true);
         searchButton.setDisable(true);
@@ -181,36 +183,33 @@ public class CsvController implements Initializable {
         selectedItems = new Stack<SearchItem>();
 
         setUpRules();
-        
 
         tsm = tableView.getSelectionModel();
         tsm.setSelectionMode(SelectionMode.SINGLE);
-        tsm.setCellSelectionEnabled(true);
+        // tsm.setCellSelectionEnabled(true);
 
-        
         openFileBT.setOnAction((ActionEvent e) -> {
             try {
                 boolean fileOpen = openFile();   // open the file
                 if (fileOpen) {
-                    
+
                     tableView = dataCache.getTableView();  // get the table that was created by the cache
-                    tableView.setEditable(true);
+                    // tableView.setEditable(true);
                     borderPaneLayout.setCenter(tableView);  // center it
                     insertRowBT.setDisable(false);
                     deleteRowBT.setDisable(false);
-                    
-                    
+
                     Iterator i = tableView.getColumns().iterator();
-                    
+
                     while (i.hasNext()) {
                         tc = (TableColumn) i.next();
                         setUp(tc);  // for every column on the screen, set up the on edit function. Pass in the Table Column
                     }
                 }
-                
+
             } catch (IOException ex) {
                 System.out.println(ex.getMessage());
-                
+
             } catch (CsvValidationException ex) {
                 System.out.println(ex.toString());
             }
@@ -218,8 +217,6 @@ public class CsvController implements Initializable {
 
         logger.info("Exit Controller");
     }
-
-    
 
     private void setUpRules() {
 
@@ -277,8 +274,6 @@ public class CsvController implements Initializable {
     public boolean openFile() throws IOException, CsvValidationException {
 
         logger.info("Enter Open File");
-        
-       
 
         boolean fileOpen = false;
 
@@ -408,10 +403,84 @@ public class CsvController implements Initializable {
 
     @FXML
     private void about() {
-        Alert a = new Alert(AlertType.INFORMATION, "Simple CSV Editor. Version 0.8. BETA Release. By ReedmanIT");
+        Alert a = new Alert(AlertType.INFORMATION, "Simple CSV Editor. Version 0.10 BETA Release. By ReedmanIT");
 
         a.showAndWait();
 
+    }
+
+    @FXML
+    private void editForm(ActionEvent event) throws IOException {
+        logger.info("Entering edit form");
+
+        tsm = tableView.getSelectionModel();
+
+        if (tsm.isEmpty()) {
+            Alert a = new Alert(AlertType.ERROR, "Please select a row to edit");
+            a.showAndWait();
+
+            return;   // stop
+        }
+        // lets go the user has selected a row
+        //
+        ArrayList<Label> labels = new ArrayList<Label>();   // build some data structures for the labels and text fields on the edit form
+        ArrayList<TextField> textFields = new ArrayList<TextField>();
+
+        ObservableList<TableColumn<ObservableList, ?>> tableColumns = tableView.getColumns();  // get the columns from the table view
+        Iterator<TableColumn<ObservableList, ?>> i = tableColumns.iterator();
+
+        while (i.hasNext()) {  // create the labels for the edit form
+            TableColumn t = i.next();
+            labels.add(new Label(t.getText()));
+
+        }
+
+        ObservableList<String> row = tableView.getItems().get(tsm.getSelectedIndex());  // get the row that the user has selected
+
+        ListIterator<String> l = row.listIterator();
+
+        while (l.hasNext()) {
+            textFields.add(new TextField(l.next()));  // add text fields - supplying the data from the selected row
+//            logger.info(l.next());
+        }
+
+        //Create Stage
+        editFormScreen = new Stage();
+        editFormScreen.setTitle("Edit Form");
+
+        //Create view from FXML
+        FXMLLoader loader = new FXMLLoader(CsvController.class.getResource("/com/reedmanit/csveditor/view/edit.fxml"));
+
+        Parent parent = loader.load();
+
+        Scene scene = new Scene(parent);
+
+        theEditController = loader.<EditController>getController();
+
+        theEditController.setCSVController(CsvController.this);
+
+        try {
+            theEditController.createEditForm(labels, textFields);
+        } catch (Exception ex) {
+            logger.equals(ex.toString());
+        }
+
+//Set view in window
+        editFormScreen.setScene(scene);
+
+//Launch
+        editFormScreen.showAndWait();   // show the edit form
+
+        if (theEditController.getAction().equals("submit")) {  // only want to do this if the data was changed
+            extractFieldsFromEdit(tsm.getSelectedIndex());
+            tableView.refresh();  // refresh the tableview - the new row will appear on the screen
+            if (saveBT.isDisabled()) {
+                saveBT.setDisable(false);
+            }
+            facts.put("EditOccured", "TRUE");
+        }
+
+        logger.info("Exit Edit Form");
     }
 
     @FXML
@@ -438,30 +507,26 @@ public class CsvController implements Initializable {
         logger.info("Exit delete row");
 
     }
-    
+
     @FXML
     private void insertForm(ActionEvent event) throws IOException {
-        
+
         //Create Stage
         insertFormScreen = new Stage();
         insertFormScreen.setTitle("Insert Form");
-        
+
         ArrayList<Label> labels = new ArrayList<Label>();
         ArrayList<TextField> textFields = new ArrayList<TextField>();
-        
+
         ObservableList<TableColumn<ObservableList, ?>> tableColumns = tableView.getColumns();
         Iterator<TableColumn<ObservableList, ?>> i = tableColumns.iterator();
-        
+
         while (i.hasNext()) {
-           TableColumn t = i.next();
-           labels.add(new Label(t.getText()));
-           textFields.add(new TextField());
-           
+            TableColumn t = i.next();
+            labels.add(new Label(t.getText()));
+            textFields.add(new TextField());
+
         }
-///
-///
-        
-  ////      
 
 //Create view from FXML
         FXMLLoader loader = new FXMLLoader(CsvController.class.getResource("/com/reedmanit/csveditor/view/insert.fxml"));
@@ -473,58 +538,72 @@ public class CsvController implements Initializable {
         theInsertController = loader.<InsertController>getController();
 
         theInsertController.setCSVController(CsvController.this);
-        
+
         try {
             theInsertController.createInsertForm(labels, textFields);
         } catch (Exception ex) {
             logger.equals(ex.toString());
         }
 
-        
 //Set view in window
         insertFormScreen.setScene(scene);
 
 //Launch
         insertFormScreen.showAndWait();
-        
-        extractFieldsFromForm();
-       
-       
-       
-       
-        
+
+        if (theInsertController.getActionPerformed().equals("Submit")) {
+            extractFieldsFromFormInsert(); // create the row
+
+        }
+
         logger.info("Exit Insert Form");
     }
-    
-    private void extractFieldsFromForm() {
-        
-        logger.info("Enter Extract Fields from Form");
-        
+
+    private void extractFieldsFromEdit(int rowIndex) {
+        logger.info("Enter Extract Fieldas from Form Edit");
+
+        List<TextField> changedRow = theEditController.getTheEditForm().getFormFields();  // get the form fields
+
+        ObservableList<String> originalRow = FXCollections.<String>observableArrayList();  // create a new empty row of empty data
+
+        originalRow = tableView.getItems().get(rowIndex);  // get the orginal row from the table view and populate the empty row
+
+        for (int i = 0; i < changedRow.size(); i++) {  // set each TextField in the orginal row with the new data, this updates the underlying data model 
+
+            TextField tf = changedRow.get(i);
+            originalRow.set(i, tf.getText());
+
+        }
+
+        logger.info("Exit extract fields from form edit");
+    }
+
+    private void extractFieldsFromFormInsert() {
+
+        logger.info("Enter Extract Fields from Form Insert");
+
         List<TextField> newRow = theInsertController.getTheInsertForm().getTextFields();
-       
+
         var r = newRow.listIterator();
-        
-           
+
         int idx = tableView.getItems().size();     // find the last row
 
         ObservableList<String> aNewRow = FXCollections.<String>observableArrayList();  // create a new row of data
-       
+
         while (r.hasNext()) {
             TextField tf = r.next();
             aNewRow.add(tf.getText());
         }
-        
+
         tableView.getItems().add(idx, aNewRow);  // add the new row to the TableView
 
         tableView.getSelectionModel().select(idx);  // select the new row
-       // tableView.edit(idx, tableView.getColumns().get(0));  // set as edit
+        // tableView.edit(idx, tableView.getColumns().get(0));  // set as edit
         tableView.scrollTo(idx);  // scroll to the new row
-        
-        logger.info("Leave extract fields from Form");
-        
+
+        logger.info("Leave extract fields from Form Insert");
+
     }
-    
-    
 
     @FXML
     private void insertRow(ActionEvent event) {
@@ -690,12 +769,11 @@ public class CsvController implements Initializable {
         data.get(ce.getTablePosition().getRow()).set(ce.getTablePosition().getColumn(), ce.getNewValue());
 
         facts.put("OpenButtonState", "ENABLE");
-         facts.put("EditOccured", "TRUE");
+        facts.put("EditOccured", "TRUE");
         rulesEngine.fire(rules, facts);
 
         //editOccuredCondition.setState(true);
-      //  listOfConditions.add(editOccuredCondition);
-
+        //  listOfConditions.add(editOccuredCondition);
         logger.info("Edit On Edit Commit");
 
     }
@@ -725,9 +803,13 @@ public class CsvController implements Initializable {
     public void setTheStage(Stage theStage) {
         this.theStage = theStage;
     }
-    
+
     public Stage getInsertFormStage() {
         return insertFormScreen;
+    }
+
+    public Stage getEditFormStage() {
+        return editFormScreen;
     }
 
 }
