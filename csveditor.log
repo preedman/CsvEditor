@@ -1,2 +1,90 @@
-2022-12-02 14:21:21 INFO  TurnOnSaveButton:62 - Entering evaluate
-2022-12-02 14:21:21 INFO  TurnOnSaveButton:81 - Exit evaluate
+2023-01-03 09:53:46 INFO  CsvController:174 - Starting controller
+2023-01-03 09:53:46 INFO  CsvController:223 - Entering Set Up Rules
+2023-01-03 09:53:46 INFO  TurnOnSaveButton:62 - Entering evaluate
+2023-01-03 09:53:46 INFO  TurnOnSaveButton:81 - Exit evaluate
+2023-01-03 09:53:46 INFO  ExitWithOutSave:54 - Entering evaluate
+2023-01-03 09:53:46 INFO  ExitWithOutSave:64 - edit occured Fact{name='EditOccured', value=FALSE}
+2023-01-03 09:53:46 INFO  ExitWithOutSave:65 - file open Fact{name='OpenNewFile', value=FALSE}
+2023-01-03 09:53:46 INFO  ExitWithOutSave:71 - Exit evaluate
+2023-01-03 09:53:46 INFO  FileSizeLimit:59 - Entering Evaluate
+2023-01-03 09:53:46 INFO  FileSizeLimit:73 - Exit Evaluate
+2023-01-03 09:53:46 INFO  TurnOnSearchButton:55 - Enter evaluate
+2023-01-03 09:53:46 INFO  TurnOnSearchButton:66 - Exit evaluate
+2023-01-03 09:53:46 INFO  CsvController:259 - Exit Set Up Rules
+2023-01-03 09:53:46 INFO  CsvController:218 - Exit Controller
+2023-01-03 09:53:48 INFO  CsvController:276 - Enter Open File
+2023-01-03 09:53:48 INFO  TurnOnSaveButton:62 - Entering evaluate
+2023-01-03 09:53:48 INFO  TurnOnSaveButton:81 - Exit evaluate
+2023-01-03 09:53:48 INFO  ExitWithOutSave:54 - Entering evaluate
+2023-01-03 09:53:48 INFO  ExitWithOutSave:64 - edit occured Fact{name='EditOccured', value=FALSE}
+2023-01-03 09:53:48 INFO  ExitWithOutSave:65 - file open Fact{name='OpenNewFile', value=TRUE}
+2023-01-03 09:53:48 INFO  ExitWithOutSave:71 - Exit evaluate
+2023-01-03 09:53:48 INFO  FileSizeLimit:59 - Entering Evaluate
+2023-01-03 09:53:48 INFO  FileSizeLimit:73 - Exit Evaluate
+2023-01-03 09:53:48 INFO  TurnOnSearchButton:55 - Enter evaluate
+2023-01-03 09:53:48 INFO  TurnOnSearchButton:66 - Exit evaluate
+2023-01-03 09:53:48 INFO  TurnOnSearchButton:74 - Enter execute
+2023-01-03 09:53:48 INFO  TurnOnSearchButton:76 - Exit evaluate
+2023-01-03 09:53:54 INFO  CsvController:347 - Enter process csv file
+2023-01-03 09:53:54 INFO  CsvController:382 - Enter file size exceeds limit
+2023-01-03 09:53:54 INFO  CsvController:388 - 989kb
+2023-01-03 09:53:54 INFO  TurnOnSaveButton:62 - Entering evaluate
+2023-01-03 09:53:54 INFO  TurnOnSaveButton:81 - Exit evaluate
+2023-01-03 09:53:54 INFO  ExitWithOutSave:54 - Entering evaluate
+2023-01-03 09:53:54 INFO  ExitWithOutSave:64 - edit occured Fact{name='EditOccured', value=FALSE}
+2023-01-03 09:53:54 INFO  ExitWithOutSave:65 - file open Fact{name='OpenNewFile', value=TRUE}
+2023-01-03 09:53:54 INFO  ExitWithOutSave:71 - Exit evaluate
+2023-01-03 09:53:54 INFO  FileSizeLimit:59 - Entering Evaluate
+2023-01-03 09:53:54 INFO  FileSizeLimit:73 - Exit Evaluate
+2023-01-03 09:53:54 INFO  TurnOnSearchButton:55 - Enter evaluate
+2023-01-03 09:53:54 INFO  TurnOnSearchButton:66 - Exit evaluate
+2023-01-03 09:53:54 INFO  TurnOnSearchButton:74 - Enter execute
+2023-01-03 09:53:54 INFO  TurnOnSearchButton:76 - Exit evaluate
+2023-01-03 09:53:54 INFO  CsvController:399 - Exit file size exceeds limit
+2023-01-03 09:53:54 INFO  TurnOnSaveButton:62 - Entering evaluate
+2023-01-03 09:53:54 INFO  TurnOnSaveButton:81 - Exit evaluate
+2023-01-03 09:53:54 INFO  ExitWithOutSave:54 - Entering evaluate
+2023-01-03 09:53:54 INFO  ExitWithOutSave:64 - edit occured Fact{name='EditOccured', value=FALSE}
+2023-01-03 09:53:54 INFO  ExitWithOutSave:65 - file open Fact{name='OpenNewFile', value=TRUE}
+2023-01-03 09:53:54 INFO  ExitWithOutSave:71 - Exit evaluate
+2023-01-03 09:53:54 INFO  FileSizeLimit:59 - Entering Evaluate
+2023-01-03 09:53:54 INFO  FileSizeLimit:73 - Exit Evaluate
+2023-01-03 09:53:54 INFO  TurnOnSearchButton:55 - Enter evaluate
+2023-01-03 09:53:54 INFO  TurnOnSearchButton:66 - Exit evaluate
+2023-01-03 09:53:54 INFO  TurnOnSearchButton:74 - Enter execute
+2023-01-03 09:53:54 INFO  TurnOnSearchButton:76 - Exit evaluate
+2023-01-03 09:53:54 INFO  CsvController:377 - Exit Process CSV file
+2023-01-03 09:53:54 INFO  CsvController:325 - Enter set up search
+2023-01-03 09:53:54 INFO  CsvController:342 - Exit set up search
+2023-01-03 09:53:54 INFO  CsvController:318 - Exit Open File
+2023-01-03 09:53:54 INFO  CsvController:265 - Enter SetUp ﻿OBJECTID
+2023-01-03 09:53:54 INFO  CsvController:271 - Exit SetUp
+2023-01-03 09:53:54 INFO  CsvController:265 - Enter SetUp PLANT_STRUCTURE_NUMBER
+2023-01-03 09:53:54 INFO  CsvController:271 - Exit SetUp
+2023-01-03 09:53:54 INFO  CsvController:265 - Enter SetUp TRAFFIC_TYPES_DESCRIPTION
+2023-01-03 09:53:54 INFO  CsvController:271 - Exit SetUp
+2023-01-03 09:53:54 INFO  CsvController:265 - Enter SetUp SECTION_TYPES_DESCRIPTION
+2023-01-03 09:53:54 INFO  CsvController:271 - Exit SetUp
+2023-01-03 09:53:54 INFO  CsvController:265 - Enter SetUp LOCATIONS_DESCRIPTION
+2023-01-03 09:53:54 INFO  CsvController:271 - Exit SetUp
+2023-01-03 09:53:54 INFO  CsvController:265 - Enter SetUp BIKEWAY_ON_OFF_ROAD_DESC
+2023-01-03 09:53:54 INFO  CsvController:271 - Exit SetUp
+2023-01-03 09:53:54 INFO  CsvController:265 - Enter SetUp BIKEWAY_WIDTH
+2023-01-03 09:53:54 INFO  CsvController:271 - Exit SetUp
+2023-01-03 09:53:54 INFO  CsvController:265 - Enter SetUp STREET_NAME
+2023-01-03 09:53:54 INFO  CsvController:271 - Exit SetUp
+2023-01-03 09:53:54 INFO  CsvController:265 - Enter SetUp SUBURB
+2023-01-03 09:53:54 INFO  CsvController:271 - Exit SetUp
+2023-01-03 09:53:54 INFO  CsvController:265 - Enter SetUp OWNER
+2023-01-03 09:53:54 INFO  CsvController:271 - Exit SetUp
+2023-01-03 09:53:54 INFO  CsvController:265 - Enter SetUp SHAPE_Length
+2023-01-03 09:53:54 INFO  CsvController:271 - Exit SetUp
+2023-01-03 09:53:57 INFO  InsertController:73 - Enter Initialise
+2023-01-03 09:53:57 INFO  InsertController:102 - Exit initialise
+2023-01-03 09:53:57 INFO  InsertController:108 - Enter create Insert Form
+2023-01-03 09:53:57 INFO  InsertController:127 - Exit create insert form
+2023-01-03 09:54:04 INFO  CsvController:559 - Exit Insert Form
+2023-01-03 09:54:08 INFO  CsvController:414 - Entering edit form
+2023-01-03 09:54:08 INFO  EditController:102 - Enter create Edit Form
+2023-01-03 09:54:08 INFO  EditController:121 - Exit create edit form
+2023-01-03 09:54:14 INFO  CsvController:483 - Exit Edit Form
