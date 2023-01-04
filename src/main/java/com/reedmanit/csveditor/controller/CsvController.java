@@ -403,7 +403,7 @@ public class CsvController implements Initializable {
 
     @FXML
     private void about() {
-        Alert a = new Alert(AlertType.INFORMATION, "Simple CSV Editor. Version 0.10 BETA Release. By ReedmanIT");
+        Alert a = new Alert(AlertType.INFORMATION, "Simple CSV Editor. Version 0.10.1 BETA Release. By ReedmanIT");
 
         a.showAndWait();
 
@@ -553,6 +553,9 @@ public class CsvController implements Initializable {
 
         if (theInsertController.getActionPerformed().equals("Submit")) {
             extractFieldsFromFormInsert(); // create the row
+            if (saveBT.isDisabled()) {
+                saveBT.setDisable(false);
+            }
 
         }
 

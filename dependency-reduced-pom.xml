@@ -4,7 +4,7 @@
   <groupId>com.reedmanit</groupId>
   <artifactId>CsvEditor</artifactId>
   <name>CsvEditor</name>
-  <version>0.10</version>
+  <version>0.10.1</version>
   <build>
     <plugins>
       <plugin>
