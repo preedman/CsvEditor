@@ -1,2 +1,104 @@
-2023-01-04 14:38:34 INFO  TurnOnSaveButton:62 - Entering evaluate
-2023-01-04 14:38:34 INFO  TurnOnSaveButton:81 - Exit evaluate
+2023-10-21 13:28:39 INFO  CsvController:183 - Starting controller
+2023-10-21 13:28:39 INFO  CsvController:226 - Entering Set Up Rules
+2023-10-21 13:28:39 INFO  CsvController:835 - Enter read properties
+2023-10-21 13:28:39 INFO  CsvController:850 - Software version 0.10.1
+2023-10-21 13:28:39 INFO  ExitWithOutSaveRule:43 - Constructing rule
+2023-10-21 13:28:39 INFO  TurnOnSaveButton:62 - Entering evaluate
+2023-10-21 13:28:39 INFO  TurnOnSaveButton:81 - Exit evaluate
+2023-10-21 13:28:39 INFO  CsvController:254 - Exit Set Up Rules
+2023-10-21 13:28:39 INFO  CsvController:221 - Exit Controller
+2023-10-21 13:28:40 INFO  CsvController:260 - Enter Open File
+2023-10-21 13:28:40 INFO  ExitWithOutSaveRule:55 - Evaluting Rule Enter
+2023-10-21 13:28:40 INFO  ExitWithOutSaveRule:63 - Open Events 0 edit events 0
+2023-10-21 13:28:40 INFO  ExitWithOutSaveRule:65 - Evaluting Rule Exit
+2023-10-21 13:28:51 INFO  CsvController:330 - Enter process csv file
+2023-10-21 13:28:51 INFO  Data:63 - Entering file size too big
+2023-10-21 13:28:51 INFO  Data:69 - File size is 989kb
+2023-10-21 13:28:51 INFO  Data:75 - Exit file size too big
+2023-10-21 13:28:51 INFO  Data:107 - Checking first line contains commas
+2023-10-21 13:28:51 INFO  TurnOnSaveButton:62 - Entering evaluate
+2023-10-21 13:28:51 INFO  TurnOnSaveButton:81 - Exit evaluate
+2023-10-21 13:28:51 INFO  CsvController:372 - Exit Process CSV file
+2023-10-21 13:28:51 INFO  CsvController:308 - Enter set up search
+2023-10-21 13:28:51 INFO  CsvController:325 - Exit set up search
+2023-10-21 13:28:51 INFO  ExitWithOutSaveRule:55 - Evaluting Rule Enter
+2023-10-21 13:28:51 INFO  ExitWithOutSaveRule:63 - Open Events 1 edit events 0
+2023-10-21 13:28:51 INFO  ExitWithOutSaveRule:65 - Evaluting Rule Exit
+2023-10-21 13:28:51 INFO  CsvController:301 - Exit Open File
+2023-10-21 13:28:55 INFO  CsvController:260 - Enter Open File
+2023-10-21 13:28:55 INFO  ExitWithOutSaveRule:55 - Evaluting Rule Enter
+2023-10-21 13:28:55 INFO  ExitWithOutSaveRule:63 - Open Events 1 edit events 0
+2023-10-21 13:28:55 INFO  ExitWithOutSaveRule:65 - Evaluting Rule Exit
+2023-10-21 13:29:07 INFO  CsvController:330 - Enter process csv file
+2023-10-21 13:29:07 INFO  Data:63 - Entering file size too big
+2023-10-21 13:29:07 INFO  Data:69 - File size is 0kb
+2023-10-21 13:29:07 INFO  Data:75 - Exit file size too big
+2023-10-21 13:29:07 INFO  Data:107 - Checking first line contains commas
+2023-10-21 13:29:11 ERROR CsvController:350 - Throw an exception
+2023-10-21 13:29:11 ERROR CsvController:293 - Not a comma separate file
+2023-10-21 13:29:13 INFO  CsvController:260 - Enter Open File
+2023-10-21 13:29:13 INFO  ExitWithOutSaveRule:55 - Evaluting Rule Enter
+2023-10-21 13:29:13 INFO  ExitWithOutSaveRule:63 - Open Events 1 edit events 0
+2023-10-21 13:29:13 INFO  ExitWithOutSaveRule:65 - Evaluting Rule Exit
+2023-10-21 13:29:19 INFO  CsvController:330 - Enter process csv file
+2023-10-21 13:29:19 INFO  Data:63 - Entering file size too big
+2023-10-21 13:29:19 INFO  Data:69 - File size is 989kb
+2023-10-21 13:29:19 INFO  Data:75 - Exit file size too big
+2023-10-21 13:29:19 INFO  Data:107 - Checking first line contains commas
+2023-10-21 13:29:19 INFO  TurnOnSaveButton:62 - Entering evaluate
+2023-10-21 13:29:19 INFO  TurnOnSaveButton:81 - Exit evaluate
+2023-10-21 13:29:19 INFO  CsvController:372 - Exit Process CSV file
+2023-10-21 13:29:19 INFO  CsvController:308 - Enter set up search
+2023-10-21 13:29:19 INFO  CsvController:325 - Exit set up search
+2023-10-21 13:29:19 INFO  ExitWithOutSaveRule:55 - Evaluting Rule Enter
+2023-10-21 13:29:19 INFO  ExitWithOutSaveRule:63 - Open Events 2 edit events 0
+2023-10-21 13:29:19 INFO  ExitWithOutSaveRule:65 - Evaluting Rule Exit
+2023-10-21 13:29:19 INFO  CsvController:301 - Exit Open File
+2023-10-21 13:29:26 INFO  CsvController:260 - Enter Open File
+2023-10-21 13:29:26 INFO  ExitWithOutSaveRule:55 - Evaluting Rule Enter
+2023-10-21 13:29:26 INFO  ExitWithOutSaveRule:63 - Open Events 2 edit events 0
+2023-10-21 13:29:26 INFO  ExitWithOutSaveRule:65 - Evaluting Rule Exit
+2023-10-21 13:29:33 INFO  CsvController:330 - Enter process csv file
+2023-10-21 13:29:33 INFO  Data:63 - Entering file size too big
+2023-10-21 13:29:33 INFO  Data:69 - File size is 796kb
+2023-10-21 13:29:33 INFO  Data:75 - Exit file size too big
+2023-10-21 13:29:33 INFO  Data:107 - Checking first line contains commas
+2023-10-21 13:29:36 ERROR CsvController:363 - Throw an exception
+2023-10-21 13:29:36 ERROR CsvController:293 - Invalid Data in Headers
+2023-10-21 13:29:38 INFO  CsvController:260 - Enter Open File
+2023-10-21 13:29:38 INFO  ExitWithOutSaveRule:55 - Evaluting Rule Enter
+2023-10-21 13:29:38 INFO  ExitWithOutSaveRule:63 - Open Events 2 edit events 0
+2023-10-21 13:29:38 INFO  ExitWithOutSaveRule:65 - Evaluting Rule Exit
+2023-10-21 13:29:46 INFO  CsvController:330 - Enter process csv file
+2023-10-21 13:29:46 INFO  Data:63 - Entering file size too big
+2023-10-21 13:29:46 INFO  Data:69 - File size is 9255kb
+2023-10-21 13:29:46 INFO  Data:75 - Exit file size too big
+2023-10-21 13:29:46 INFO  Data:107 - Checking first line contains commas
+2023-10-21 13:29:46 INFO  TurnOnSaveButton:62 - Entering evaluate
+2023-10-21 13:29:46 INFO  TurnOnSaveButton:81 - Exit evaluate
+2023-10-21 13:29:46 INFO  CsvController:372 - Exit Process CSV file
+2023-10-21 13:29:46 INFO  CsvController:308 - Enter set up search
+2023-10-21 13:29:46 INFO  CsvController:325 - Exit set up search
+2023-10-21 13:29:46 INFO  ExitWithOutSaveRule:55 - Evaluting Rule Enter
+2023-10-21 13:29:46 INFO  ExitWithOutSaveRule:63 - Open Events 3 edit events 0
+2023-10-21 13:29:46 INFO  ExitWithOutSaveRule:65 - Evaluting Rule Exit
+2023-10-21 13:29:46 INFO  CsvController:301 - Exit Open File
+2023-10-21 13:30:01 INFO  CsvController:385 - Entering edit form
+2023-10-21 13:30:01 INFO  EditController:102 - Enter create Edit Form
+2023-10-21 13:30:01 INFO  EditController:121 - Exit create edit form
+2023-10-21 13:30:08 INFO  CsvController:461 - Exit Edit Form
+2023-10-21 13:30:11 INFO  CsvController:260 - Enter Open File
+2023-10-21 13:30:11 INFO  ExitWithOutSaveRule:55 - Evaluting Rule Enter
+2023-10-21 13:30:11 INFO  ExitWithOutSaveRule:63 - Open Events 3 edit events 0
+2023-10-21 13:30:11 INFO  ExitWithOutSaveRule:65 - Evaluting Rule Exit
+2023-10-21 13:30:18 INFO  CsvController:330 - Enter process csv file
+2023-10-21 13:30:18 INFO  Data:63 - Entering file size too big
+2023-10-21 13:30:18 INFO  Data:69 - File size is 0kb
+2023-10-21 13:30:18 INFO  Data:75 - Exit file size too big
+2023-10-21 13:30:18 INFO  Data:107 - Checking first line contains commas
+2023-10-21 13:30:25 ERROR CsvController:350 - Throw an exception
+2023-10-21 13:30:25 ERROR CsvController:293 - Not a comma separate file
+2023-10-21 13:30:33 INFO  CsvController:385 - Entering edit form
+2023-10-21 13:30:33 INFO  EditController:102 - Enter create Edit Form
+2023-10-21 13:30:33 INFO  EditController:121 - Exit create edit form
+2023-10-21 13:30:34 INFO  CsvController:461 - Exit Edit Form
