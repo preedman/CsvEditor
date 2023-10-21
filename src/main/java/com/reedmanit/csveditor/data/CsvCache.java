@@ -5,6 +5,8 @@
  */
 package com.reedmanit.csveditor.data;
 
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
@@ -54,9 +56,14 @@ public class CsvCache {
 
         ObservableList<ObservableList> data = FXCollections.observableArrayList();
 
-        CSVReader csvReader = new CSVReaderBuilder(in).build();
+        CSVParser parser
+                = new CSVParserBuilder()
+                        .withSeparator(',')
+                        .withIgnoreQuotations(true)
+                        .build();
 
-        
+        CSVReader csvReader = new CSVReaderBuilder(in).withCSVParser(parser).build();
+
         headers = csvReader.readNextSilently();  // pull out the headers from the file
 
         for (int i = 0; i < headers.length; i++) {
@@ -92,8 +99,6 @@ public class CsvCache {
         table.setItems(data);
 
     }
-    
-    
 
     public void OnEditCommit(Event e) {
 
@@ -120,18 +125,18 @@ public class CsvCache {
     public TableView<ObservableList> getTableView() {
         return table;
     }
-    
+
     public int indexOfHeader(String aHeader) {
         int index = 0;
-        
-        for (int i = 0; i < headers.length; i++) { 
-            
+
+        for (int i = 0; i < headers.length; i++) {
+
             if (headers[i].contains(aHeader)) {
                 index = i;
                 break;
             }
         }
-        
+
         return index;
     }
 

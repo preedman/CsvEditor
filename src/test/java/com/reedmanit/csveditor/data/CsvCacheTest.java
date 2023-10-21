@@ -5,10 +5,12 @@
  */
 package com.reedmanit.csveditor.data;
 
+import com.opencsv.exceptions.CsvValidationException;
 import com.reedmanit.csveditor.data.CsvCache;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.concurrent.CountDownLatch;
@@ -49,49 +51,7 @@ public class CsvCacheTest {
     public void tearDown() {
     }
 
-    /**
-     * Test of loadDataFile method, of class CsvCache.
-     *
-     * /
-     *
-     *
-     *
-     * @Test public void testLoadDataFile() throws Exception {
-     * System.out.println("loadDataFile"); CsvCache cache =
-     * CsvCache.getInstance();
-     *
-     *
-     * // InputStreamReader s = new
-     * InputStreamReader(this.getClass().getResourceAsStream("/com/reedmanit/cvseditor/data/cbd-bike-racks-2021-04-08.csv"));
-     *
-     * BufferedReader r = new BufferedReader(new
-     * FileReader("C:\\SoftwareDevelopment\\Projects\\CVSReaderTest\\src\\main\\java\\com\\reedmanit\\cvsreadertest\\cbd-bike-racks-2021-04-08.csv"));
-     *
-     * cache.setDataFile(r);
-     *
-     * cache.loadDataFile(); // TODO review the generated test code and remove
-     * the default call to fail. //fail("The test case is a prototype.");
-     *
-     * ObservableList<ObservableList<StringProperty>> data = cache.getdata();
-     *
-     * System.out.println(data.size());
-     *
-     * for (int i = 0; i < data.size(); i++) {
-     *
-     * // Item m = data.get(i);
-     *
-     * ObservableList<StringProperty> item = data.get(i);
-     *
-     * System.out.println(item.size());
-     *
-     * for (int a = 0; a < item.size(); a++) { SimpleStringProperty p =
-     * (SimpleStringProperty) item.get(a); System.out.println(p); }
-     *
-     * }
-     *
-     *
-     * }
-     */
+    
     @Test
     public void testTableView() throws Exception {
 
@@ -102,13 +62,16 @@ public class CsvCacheTest {
         latch.await(5, TimeUnit.SECONDS);
         
         
+        
+        String resourceName = "cbd-bike-racks-2021-04-08.csv";
 
-        CsvCache cache = new CsvCache(new File("C:\\SoftwareDevelopment\\Projects\\CVSReaderTest\\src\\main\\java\\com\\reedmanit\\cvsreadertest\\cbd-bike-racks-2021-04-08.csv"));
+        ClassLoader classLoader = getClass().getClassLoader();
+        File testFile = new File(classLoader.getResource(resourceName).getFile());
+        
+        CsvCache cache = new CsvCache(testFile);
+        
 
-        //   InputStreamReader s = new InputStreamReader(this.getClass().getResourceAsStream("/com/reedmanit/cvseditor/data/cbd-bike-racks-2021-04-08.csv"));
-   //     BufferedReader r = new BufferedReader(new FileReader("C:\\SoftwareDevelopment\\Projects\\CVSReaderTest\\src\\main\\java\\com\\reedmanit\\cvsreadertest\\cbd-bike-racks-2021-04-08.csv"));
-
-     //   cache.setDataFile(r);
+      
 
         cache.buildData();
 
@@ -121,5 +84,40 @@ public class CsvCacheTest {
         Platform.exit();
 
     }
+
+  /**  
+    @Test
+    public void testInvalidSeparator() throws InterruptedException, IOException, CsvValidationException {
+        
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.startup(() -> {
+            latch.countDown();
+        });
+        latch.await(5, TimeUnit.SECONDS);
+        
+         String resourceName = "my-toilet-file-invalid-sep.csv";
+
+        ClassLoader classLoader = getClass().getClassLoader();
+        File testFile = new File(classLoader.getResource(resourceName).getFile());
+        
+        CsvCache cache = new CsvCache(testFile);
+        
+
+      
+
+        cache.buildData();
+
+        ObservableList<ObservableList> data = cache.getTableView().getItems();
+
+        System.out.println(data.size());
+        
+        assertEquals(data.size(), 110);
+        
+        Platform.exit();
+        
+        
+        
+    }
+**/
 
 }

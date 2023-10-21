@@ -9,7 +9,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane fx:id="borderPaneLayout" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="736.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.reedmanit.csveditor.controller.CsvController">
+<BorderPane fx:id="borderPaneLayout" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.reedmanit.csveditor.controller.CsvController">
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
@@ -21,7 +21,16 @@
                      </image>
                   </ImageView>
                </graphic></Button>
-            <Button fx:id="saveBT" defaultButton="true" mnemonicParsing="false" onAction="#saveFile" text="Save File">
+            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveFileData" prefHeight="29.0" prefWidth="74.0" text="Save">
+               <graphic>
+                  <ImageView fitHeight="21.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../style/Save_37110.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="saveBT" defaultButton="true" mnemonicParsing="false" onAction="#saveFile" text="Save As">
                <graphic>
                   <ImageView fitHeight="19.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                      <image>

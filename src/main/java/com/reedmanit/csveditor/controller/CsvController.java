@@ -7,15 +7,18 @@ package com.reedmanit.csveditor.controller;
 
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvValidationException;
+import com.reedmanit.csveditor.business.rules.Data;
 import com.reedmanit.csveditor.data.CsvCache;
 import com.reedmanit.csveditor.ui.rules.ExitWithOutSave;
-import com.reedmanit.csveditor.business.rules.FileSizeLimit;
-import com.reedmanit.csveditor.business.rules.ValidHeaders;
 import com.reedmanit.csveditor.data.SearchItem;
 import com.reedmanit.csveditor.data.Util;
+import com.reedmanit.csveditor.ui.rules.Edit;
+import com.reedmanit.csveditor.ui.rules.ExitWithOutSaveRule;
+import com.reedmanit.csveditor.ui.rules.FileOpen;
 
 import com.reedmanit.csveditor.ui.rules.TurnOnSaveButton;
 import com.reedmanit.csveditor.ui.rules.TurnOnSearchButton;
+import com.reedmanit.csveditor.ui.rules.UIEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,9 +35,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Stack;
 import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
@@ -102,6 +107,8 @@ public class CsvController implements Initializable {
 
     private InsertController theInsertController;
 
+    private static Properties prop;
+
     @FXML
     private BorderPane borderPaneLayout;
 
@@ -127,6 +134,9 @@ public class CsvController implements Initializable {
     private Button saveBT;
 
     @FXML
+    private Button saveButton;
+
+    @FXML
     private TextField findTF;
 
     @FXML
@@ -150,14 +160,13 @@ public class CsvController implements Initializable {
 
     private RulesEngine rulesEngine;
 
-    private ExitWithOutSave exitwithOutSave;
+    private ExitWithOutSaveRule exitWithOutSaveRule;
 
-    private FileSizeLimit fileSizeLimit;
+    private UIEvent aUIEvent;
 
-    private ValidHeaders validHeaders;
+    private Data dataRules;
 
-    private TurnOnSearchButton turnOnSearchButton;
-
+    //private TurnOnSearchButton turnOnSearchButton;
     private TextInputDialog searchDialog;
 
     private ObservableList<String> cbData = FXCollections.<String>observableArrayList();
@@ -174,6 +183,7 @@ public class CsvController implements Initializable {
         logger.info("Starting controller");
 
         saveBT.setDisable(true);
+        saveButton.setDisable(true);
         searchButton.setDisable(true);
         findTF.setDisable(true);
         colCB.setDisable(true);
@@ -186,7 +196,6 @@ public class CsvController implements Initializable {
 
         tsm = tableView.getSelectionModel();
         tsm.setSelectionMode(SelectionMode.SINGLE);
-        // tsm.setCellSelectionEnabled(true);
 
         openFileBT.setOnAction((ActionEvent e) -> {
             try {
@@ -194,17 +203,11 @@ public class CsvController implements Initializable {
                 if (fileOpen) {
 
                     tableView = dataCache.getTableView();  // get the table that was created by the cache
-                    // tableView.setEditable(true);
+
                     borderPaneLayout.setCenter(tableView);  // center it
                     insertRowBT.setDisable(false);
                     deleteRowBT.setDisable(false);
 
-                    Iterator i = tableView.getColumns().iterator();
-
-                    while (i.hasNext()) {
-                        tc = (TableColumn) i.next();
-                        setUp(tc);  // for every column on the screen, set up the on edit function. Pass in the Table Column
-                    }
                 }
 
             } catch (IOException ex) {
@@ -222,6 +225,8 @@ public class CsvController implements Initializable {
 
         logger.info("Entering Set Up Rules");
 
+        readProperties();
+
         rulesEngine = new DefaultRulesEngine();
 
         facts = new Facts();
@@ -231,44 +236,23 @@ public class CsvController implements Initializable {
         turnOnSaveButton = new TurnOnSaveButton();
         turnOnSaveButton.setSaveButton(saveBT);
 
-        exitwithOutSave = new ExitWithOutSave();
+        exitWithOutSaveRule = new ExitWithOutSaveRule();
 
         facts.put("OpenNewFile", "FALSE");
         facts.put("EditOccured", "FALSE");
 
-        fileSizeLimit = new FileSizeLimit();
+        dataRules = new Data();
 
-        facts.put("FileSize", 0);   // set up file size rule with inital size
-
-        validHeaders = new ValidHeaders();
-        List<String> listOfHeaders = new ArrayList<String>();  // create an empty array for initial values
-
-        facts.put("Headers", listOfHeaders);
-
-        turnOnSearchButton = new TurnOnSearchButton();
-
+//        turnOnSearchButton = new TurnOnSearchButton();
         rules = new Rules();
         rules.register(turnOnSaveButton);
-        rules.register(exitwithOutSave);
-        rules.register(fileSizeLimit);
-        rules.register(validHeaders);
-        rules.register(turnOnSearchButton);
+        //  rules.register(exitwithOutSave);
 
+//        rules.register(turnOnSearchButton);
         rulesEngine.fire(rules, facts);
 
         logger.info("Exit Set Up Rules");
 
-    }
-
-    private void setUp(TableColumn t) {
-
-        logger.info("Enter SetUp " + t.getText());
-
-        t.setCellFactory(TextFieldTableCell.forTableColumn());
-
-        t.setOnEditCommit(e -> OnEditCommit(e));  // set up the function to call for every table column when the user edits the data.
-
-        logger.info("Exit SetUp");
     }
 
     public boolean openFile() throws IOException, CsvValidationException {
@@ -277,16 +261,12 @@ public class CsvController implements Initializable {
 
         boolean fileOpen = false;
 
-        facts.put("OpenNewFile", "TRUE");
-        rulesEngine.fire(rules, facts);
-
-        if (exitwithOutSave.isShowAlert()) {
-            Alert a = new Alert(AlertType.WARNING, "New File Opened but data has been modified - have you forgotten to save.?");
+        exitWithOutSaveRule.evaluateRule();
+        if (exitWithOutSaveRule.getRuleState() == true) {
+            Alert a = new Alert(AlertType.WARNING, "New File Opened but data has been modified.");
             a.showAndWait();
-            facts.put("OpenNewFile", "FALSE");
-            facts.put("EditOccured", "FALSE");
-            rulesEngine.fire(rules, facts);
-            exitwithOutSave.setShowAlert(false);
+
+            exitWithOutSaveRule.resetRuleEvents();
         }
         FileChooser fileChooser = new FileChooser();
 
@@ -302,10 +282,13 @@ public class CsvController implements Initializable {
             try {
                 theStage.setTitle(theCSVFile.getName());
                 processCSVFile();
-                if (turnOnSearchButton.isTurnOnSearchButton()) {
-                    setUpSearch();
-                }
+                //if (turnOnSearchButton.isTurnOnSearchButton()) {
+                setUpSearch();
+                // }
                 fileOpen = true;
+                aUIEvent = new FileOpen();
+                exitWithOutSaveRule.addRuleEvent(aUIEvent);
+                exitWithOutSaveRule.evaluateRule();
             } catch (IOException ioe) {
                 logger.error(ioe.getMessage());
                 throw ioe;
@@ -346,64 +329,52 @@ public class CsvController implements Initializable {
 
         logger.info("Enter process csv file");
 
-        if (fileSizeExceedsLimit()) {
+        dataRules.setSourceFile(theCSVFile);
+
+        dataRules.setLimit(new Integer(prop.getProperty("filesizelimit")));
+
+        if (dataRules.fileSizeTooBig()) {
             Alert a = new Alert(AlertType.ERROR, "CSV File exceeds file size limit. Can not be used for processing");
             a.showAndWait();
-            facts.put("FileSize", 0);  // reset rule variables for rule processing
-            fileSizeLimit.setShowAlert(false);
+
             logger.error("Throwing an exception");
             throw new IOException("File Size Limit Exceeded");
         } else {
-            fileSizeLimit.setShowAlert(false);
+
             facts.put("OpenButtonState", "DISABLE");
+
+            if (!dataRules.checkThatFileIsCommaDelimited()) { // if not commas then display a error message
+                Alert a = new Alert(AlertType.ERROR, "CSV File is not delimited by commas.");
+                a.showAndWait();
+
+                logger.error("Throw an exception");
+                throw new IOException("Not a comma separate file");   // tell the caller that this was in error
+            }
 
             dataCache = new CsvCache(theCSVFile);
             dataCache.buildData();
-            facts.put("Headers", Arrays.asList(dataCache.getHeaders()));  // put the headers in the rule for validation
 
-            rulesEngine.fire(rules, facts);
+            dataRules.setListOfHeaders(Arrays.asList(dataCache.getHeaders()));  // set up headers for valid test
 
-            if (validHeaders.isInValidData()) {
+            if (dataRules.invalidHeaders()) {  // there is data in the headers
                 Alert a = new Alert(AlertType.ERROR, "CSV File has a header record which contains data. This is invalid.");
                 a.showAndWait();
-                facts.put("Headers", new ArrayList<String>());  // reset the headers
-                validHeaders.setInValidData(false);  // set the valid headers back to false
+
                 logger.error("Throw an exception");
                 throw new IOException("Invalid Data in Headers");   // tell the caller that this was in error
 
             }
+
+            rulesEngine.fire(rules, facts);
+
         }
 
         logger.info("Exit Process CSV file");
     }
 
-    private boolean fileSizeExceedsLimit() throws IOException {
-
-        logger.info("Enter file size exceeds limit");
-
-        Path path = Paths.get(theCSVFile.getAbsolutePath());
-
-        long bytes = Files.size(path);
-
-        logger.info(bytes / 1024 + "kb");
-
-        //System.out.println(String.format("%,d kilobytes", bytes / 1024));
-        Long kb = bytes / 1024;
-
-        Integer i = Integer.valueOf(kb.intValue());
-
-        facts.put("FileSize", i);
-
-        rulesEngine.fire(rules, facts);
-
-        logger.info("Exit file size exceeds limit");
-
-        return fileSizeLimit.isShowAlert();
-    }
-
     @FXML
     private void about() {
-        Alert a = new Alert(AlertType.INFORMATION, "Simple CSV Editor. Version 0.10.1 BETA Release. By ReedmanIT");
+        Alert a = new Alert(AlertType.INFORMATION, "Simple CSV Editor " + "Version " + prop.getProperty("version") + " BETA Release. By ReedmanIT");
 
         a.showAndWait();
 
@@ -441,7 +412,7 @@ public class CsvController implements Initializable {
 
         while (l.hasNext()) {
             textFields.add(new TextField(l.next()));  // add text fields - supplying the data from the selected row
-//            logger.info(l.next());
+
         }
 
         //Create Stage
@@ -474,10 +445,17 @@ public class CsvController implements Initializable {
         if (theEditController.getAction().equals("submit")) {  // only want to do this if the data was changed
             extractFieldsFromEdit(tsm.getSelectedIndex());
             tableView.refresh();  // refresh the tableview - the new row will appear on the screen
+
             if (saveBT.isDisabled()) {
                 saveBT.setDisable(false);
             }
+            if (saveButton.isDisabled()) {
+                saveButton.setDisable(false);
+            }
             facts.put("EditOccured", "TRUE");
+            aUIEvent = new Edit();
+            exitWithOutSaveRule.addRuleEvent(aUIEvent);
+
         }
 
         logger.info("Exit Edit Form");
@@ -502,7 +480,12 @@ public class CsvController implements Initializable {
         if (saveBT.isDisabled()) {
             saveBT.setDisable(false);
         }
+        if (saveButton.isDisabled()) {
+            saveButton.setDisable(false);
+        }
         facts.put("EditOccured", "TRUE");
+        aUIEvent = new Edit();
+        exitWithOutSaveRule.addRuleEvent(aUIEvent);
 
         logger.info("Exit delete row");
 
@@ -556,6 +539,11 @@ public class CsvController implements Initializable {
             if (saveBT.isDisabled()) {
                 saveBT.setDisable(false);
             }
+            if (saveButton.isDisabled()) {
+                saveButton.setDisable(false);
+            }
+            aUIEvent = new Edit();
+            exitWithOutSaveRule.addRuleEvent(aUIEvent);
 
         }
 
@@ -601,7 +589,7 @@ public class CsvController implements Initializable {
         tableView.getItems().add(idx, aNewRow);  // add the new row to the TableView
 
         tableView.getSelectionModel().select(idx);  // select the new row
-        // tableView.edit(idx, tableView.getColumns().get(0));  // set as edit
+
         tableView.scrollTo(idx);  // scroll to the new row
 
         logger.info("Leave extract fields from Form Insert");
@@ -625,13 +613,18 @@ public class CsvController implements Initializable {
         tableView.getItems().add(idx, aNewRow);  // add the new row to the TableView
 
         tableView.getSelectionModel().select(idx);  // select the new row
-        tableView.edit(idx, tableView.getColumns().get(0));  // set as edit
+
         tableView.scrollTo(idx);  // scroll to the new row
 
         if (saveBT.isDisabled()) {
             saveBT.setDisable(false);
         }
+        if (saveButton.isDisabled()) {
+            saveButton.setDisable(false);
+        }
         facts.put("EditOccured", "TRUE");
+        aUIEvent = new Edit();
+        exitWithOutSaveRule.addRuleEvent(aUIEvent);
 
         logger.info("Exit insert row");
 
@@ -647,7 +640,7 @@ public class CsvController implements Initializable {
 
         Util u = new Util();
 
-        Platform.runLater(new Runnable() {
+        Platform.runLater(new Runnable() {  // run in separate thread
             @Override
             public void run() {
 
@@ -710,6 +703,42 @@ public class CsvController implements Initializable {
 
     @FXML
 
+    private void saveFileData(ActionEvent event) throws IOException {
+        logger.info("Enter Save File Data");
+
+        ObservableList<ObservableList> data = tableView.getItems();
+
+        Iterator<ObservableList> i = data.iterator();
+        CSVWriter writer = new CSVWriter(new FileWriter(theCSVFile.getAbsolutePath()));
+
+        writer.writeNext(dataCache.getHeaders());  // write the headers to the new file
+
+        while (i.hasNext()) {
+
+            ObservableList tokens = i.next();
+
+            String s[] = new String[tokens.size()];
+
+            for (int a = 0; a < tokens.size(); a++) {   // get from the observable list a string array which does not remove any quote chars
+
+                s[a] = (String) tokens.get(a);
+            }
+
+            writer.writeNext(s);
+
+        }
+
+        writer.close();
+
+        Alert a = new Alert(AlertType.INFORMATION, "File saved successfully");
+        a.showAndWait();
+        exitWithOutSaveRule.resetRuleEvents();
+        logger.info("Exit Save File Data");
+
+    }
+
+    @FXML
+
     private void saveFile(ActionEvent event) throws IOException {
 
         logger.info("Enter Save File");
@@ -746,6 +775,7 @@ public class CsvController implements Initializable {
             }
 
             writer.close();
+            exitWithOutSaveRule.resetRuleEvents();
         }
         logger.info("Exit save File");
 
@@ -798,6 +828,30 @@ public class CsvController implements Initializable {
             //     }
         }
 
+    }
+
+    private static void readProperties() {
+
+        logger.info("Enter read properties");
+
+        try (InputStream input = CsvController.class.getClassLoader().getResourceAsStream("csveditor.properties")) {
+
+            prop = new Properties();
+
+            if (input == null) {
+                logger.error("Unable to find properties file");
+                return;
+            }
+
+            //load a properties file from class path, inside static method
+            prop.load(input);
+
+            //get the property value and print it out
+            logger.info("Software version " + prop.getProperty("version"));
+
+        } catch (IOException ex) {
+            logger.error(SEVERE + ex.getMessage());
+        }
     }
 
     /**
