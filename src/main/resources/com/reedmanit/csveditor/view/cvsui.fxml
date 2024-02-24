@@ -13,7 +13,7 @@
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-            <Button fx:id="openFileBT" defaultButton="true" mnemonicParsing="false" onAction="#openFile" text="Open File">
+            <Button id="openFileButton" fx:id="openFileBT" defaultButton="true" mnemonicParsing="false" onAction="#openFile" text="Open File">
                <graphic>
                   <ImageView fitHeight="18.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
                      <image>

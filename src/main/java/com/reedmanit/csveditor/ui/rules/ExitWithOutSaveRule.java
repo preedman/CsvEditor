@@ -54,9 +54,9 @@ public class ExitWithOutSaveRule {
         
         exitWithOutSaveLogger.info("Evaluting Rule Enter");
         
-        if (openEvents ==1) {
-            if (editEvents > 0) {
-                this.setRuleState(true);
+        if (openEvents ==1) {  // if the file has been opened
+            if (editEvents > 0) { // and we have had at least one successful edit event
+                this.setRuleState(true);  // then this is active
             }
         }
         

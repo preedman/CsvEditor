@@ -23,12 +23,14 @@ import org.jeasy.rules.api.RulesEngine;
 import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.core.InferenceRulesEngine;
 import org.jeasy.rules.core.RuleBuilder;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -39,19 +41,19 @@ public class TurnOnSaveButtonTest {
     public TurnOnSaveButtonTest() {
     }
     
-    @BeforeAll
+    @BeforeClass
     public static void setUpClass() {
     }
     
-    @AfterAll
+    @AfterClass
     public static void tearDownClass() {
     }
     
-    @BeforeEach
+    @Before
     public void setUp() {
     }
     
-    @AfterEach
+    @After
     public void tearDown() {
     }
 

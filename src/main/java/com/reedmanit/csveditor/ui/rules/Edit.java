@@ -18,6 +18,7 @@ package com.reedmanit.csveditor.ui.rules;
 /**
  *
  * @author preed
+ * Any event that relates to editing data, insert, delete, edit
  */
 public class Edit extends UIEvent {
     

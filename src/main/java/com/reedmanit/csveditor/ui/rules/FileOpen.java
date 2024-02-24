@@ -18,6 +18,7 @@ package com.reedmanit.csveditor.ui.rules;
 /**
  *
  * @author preed
+ * The file has been successfully opened.
  */
 public class FileOpen extends UIEvent {
     

@@ -12,19 +12,25 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import javafx.scene.control.TableColumn;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -35,89 +41,96 @@ public class CsvCacheTest {
     public CsvCacheTest() {
     }
 
-    @BeforeAll
+    @BeforeClass
     public static void setUpClass() {
-    }
-
-    @AfterAll
-    public static void tearDownClass() {
-    }
-
-    @BeforeEach
-    public void setUp() {
-    }
-
-    @AfterEach
-    public void tearDown() {
-    }
-
-    
-    @Test
-    public void testTableView() throws Exception {
-
         CountDownLatch latch = new CountDownLatch(1);
         Platform.startup(() -> {
             latch.countDown();
         });
-        latch.await(5, TimeUnit.SECONDS);
+        try {
+            latch.await(5, TimeUnit.SECONDS);
+        }
+        catch (InterruptedException ex) {
+            System.out.println(ex.toString());
+            Platform.exit();
+            fail("System exception");
+        }
+    }
+
+    @AfterClass
+    public static void tearDownClass() {
+        Platform.exit();
+    }
+
+    @Before
+    public void setUp() {
+    }
+
+    @After
+    public void tearDown() {
+    }
+
+    @Test
+    public void testTableView() throws Exception {
         
-        
-        
+        System.out.println("Entering test table view");
+
         String resourceName = "cbd-bike-racks-2021-04-08.csv";
 
         ClassLoader classLoader = getClass().getClassLoader();
         File testFile = new File(classLoader.getResource(resourceName).getFile());
-        
-        CsvCache cache = new CsvCache(testFile);
-        
 
-      
+        CsvCache cache = new CsvCache(testFile);
 
         cache.buildData();
 
         ObservableList<ObservableList> data = cache.getTableView().getItems();
 
-        System.out.println(data.size());
+        assertEquals(data.size(), 110);  // assert the size of the data set
+
+        ObservableList<TableColumn<ObservableList, ?>> theCols = cache.getTableView().getColumns();
+
+        assertEquals(theCols.size(), 7);  // assert the number of cols
+
+        assertEquals("Suburb", theCols.get(0).getText());
+        assertEquals("Longitude", theCols.get(6).getText());  // assert some of the cols
         
-        assertEquals(data.size(), 110);
+        ObservableList row = cache.getTableView().getItems().get(0);
         
-        Platform.exit();
+        assertEquals("100 Adelaide Street", row.get(1)); // assert some data in the tableview
+        assertEquals("153.024", row.get(6));
+        
+        
+        
 
     }
 
-  /**  
     @Test
-    public void testInvalidSeparator() throws InterruptedException, IOException, CsvValidationException {
+    public void testLargerFile() throws InterruptedException, IOException, CsvValidationException {
         
-        CountDownLatch latch = new CountDownLatch(1);
-        Platform.startup(() -> {
-            latch.countDown();
-        });
-        latch.await(5, TimeUnit.SECONDS);
-        
-         String resourceName = "my-toilet-file-invalid-sep.csv";
+        System.out.println("Entering test larger file");
+
+        String resourceName = "my-toilet-file-2.csv";
 
         ClassLoader classLoader = getClass().getClassLoader();
         File testFile = new File(classLoader.getResource(resourceName).getFile());
-        
-        CsvCache cache = new CsvCache(testFile);
-        
 
-      
+        CsvCache cache = new CsvCache(testFile);
 
         cache.buildData();
 
         ObservableList<ObservableList> data = cache.getTableView().getItems();
 
-        System.out.println(data.size());
+        System.out.println("Size of table items " + data.size());
         
-        assertEquals(data.size(), 110);
+        ObservableList row = cache.getTableView().getItems().get(52);
         
-        Platform.exit();
+        System.out.println(row.size());
         
         
         
+        //assertEquals(data.size(), 110);
+
     }
-**/
 
 }

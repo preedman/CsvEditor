@@ -58,29 +58,7 @@ public class Data {
 
     }
 
-    public boolean fileSizeTooBig() throws IOException {
-
-        logger.info("Entering file size too big");
-
-        Path path = Paths.get(sourceFile.getAbsolutePath());
-
-        long bytes = Files.size(path);
-
-        logger.info("File size is " + bytes / 1024 + "kb");
-
-        Long kb = bytes / 1024;
-
-        Integer i = Integer.valueOf(kb.intValue());
-
-        logger.info("Exit file size too big");
-
-        if (i > getLimit()) {
-            return true;
-        } else {
-            return false;
-        }
-
-    }
+   
 
     public boolean invalidHeaders() {
 

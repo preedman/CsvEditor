@@ -10,14 +10,15 @@ import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
+import com.reedmanit.csveditor.business.rules.Headers;
+import com.reedmanit.csveditor.business.rules.RowValidation;
+import com.reedmanit.csveditor.utility.LoggingSupport;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -27,14 +28,18 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
+import org.apache.log4j.LogManager;
 
 /**
  *
  * @author preed
  */
 public class CsvCache {
+
+    protected static final org.apache.log4j.Logger cacheLogger = LogManager.getLogger(CsvCache.class.getName());
+
+    private static org.apache.log4j.Logger logger = cacheLogger;
 
     TableView<ObservableList> table = new TableView<>();
 
@@ -46,6 +51,10 @@ public class CsvCache {
 
     private final List<String> columnNames = new ArrayList<>();
 
+    private LoggingSupport logSupport;
+
+    private Headers theHeaders;
+
     public CsvCache(File aDataFile) throws IOException {
 
         in = new BufferedReader(new FileReader(aDataFile));
@@ -54,33 +63,56 @@ public class CsvCache {
 
     public void buildData() throws IOException, CsvValidationException {
 
+        logger.info("Entering build csv cache");
+
         ObservableList<ObservableList> data = FXCollections.observableArrayList();
+
+        RowValidation rowValid = RowValidation.getInstance();
+
+        Headers theHeaders = Headers.getInstance();
 
         CSVParser parser
                 = new CSVParserBuilder()
                         .withSeparator(',')
-                        .withIgnoreQuotations(true)
+                        //   .withIgnoreQuotations(true)
                         .build();
 
         CSVReader csvReader = new CSVReaderBuilder(in).withCSVParser(parser).build();
 
         headers = csvReader.readNextSilently();  // pull out the headers from the file
 
-        for (int i = 0; i < headers.length; i++) {
+        theHeaders.setListOfHeaders(Arrays.asList(headers));
 
-            final int j = i;
-            TableColumn col = new TableColumn(headers[i]);
-            col.setCellValueFactory((Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>) param -> {
+        if (theHeaders.isValidHeader()) {   // are these valid headers
 
-                if (param.getValue().get(j) != null) {
+            for (int i = 0; i < headers.length; i++) {
+
+                final int j = i;
+                TableColumn col = new TableColumn(headers[i]);
+
+                col.setCellValueFactory((Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>) param -> {
+                    logger.info("Value set " + param.getValue().get(j).toString());
                     return new SimpleStringProperty(param.getValue().get(j).toString());
-                } else {
-                    return null;
-                }
-            });
+                    //   logger.info("Entering set cell value");
 
-            table.getColumns().addAll(col);
-            this.columnNames.add(col.getText());
+                    //       if (param.getValue().get(j) != null) {
+                    //           logger.info("enter set cell value");
+                    //           logger.info("Value set " + param.getValue().get(j).toString());
+                    //           return new SimpleStringProperty(param.getValue().get(j).toString());
+                    //       } else {
+                    //           logger.info("exit set cell value");
+                    // return null;
+                    //         return new SimpleStringProperty(" ");
+                    //      }
+                    // logger.info("exit set cell value");
+                });
+
+                table.getColumns().addAll(col);
+                this.columnNames.add(col.getText());
+            }
+        } else {
+            logger.info("Headers contain invalid data " + Arrays.toString(headers));
+            throw new CsvValidationException("Headers contain data, invalid");
         }
 
         String[] records;
@@ -92,11 +124,18 @@ public class CsvCache {
             for (int i = 0; i < records.length; i++) {
                 row.add(new String(records[i]));
             }
-            data.add(row);
+            if (rowValid.doesHeadersEqualRow(columnNames, row)) {  // the number of items in the row should be equal to the headers
+                data.add(row);
+            } else {
+                logger.info("Row record " + row);
+                throw new CsvValidationException("row and column size not the same " + "row " + row.size() + "col " + columnNames.size());
+            }
         }
 
         //FINALLY ADDED TO TableView
         table.setItems(data);
+
+        logger.info("Leaving build cache");
 
     }
 

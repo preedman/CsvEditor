@@ -41,6 +41,10 @@ public class Main extends Application {
     
     private static FXMLLoader fxmlLoader;
 
+    static Scene getScene() {
+        return scene;
+    }
+
     @Override
     public void start(Stage stage) throws Exception {
 

@@ -18,12 +18,14 @@ package com.reedmanit.csveditor.business.rules;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -34,43 +36,23 @@ public class DataTest {
     public DataTest() {
     }
     
-    @BeforeAll
+    @BeforeClass
     public static void setUpClass() {
     }
     
-    @AfterAll
+    @AfterClass
     public static void tearDownClass() {
     }
     
-    @BeforeEach
+    @Before
     public void setUp() {
     }
     
-    @AfterEach
+    @After
     public void tearDown() {
     }
 
-    @Test
-    public void testFileSizeOk() throws Exception {
-        System.out.println("fileSize ok ");
-        Data instance = new Data();
-        instance.setSourceFile(new File("src/main/resources/my-toilet-file-2.csv"));
-        boolean expResult = false;
-        boolean result = instance.fileSizeTooBig();
-        assertEquals(expResult, result);
-       
-    }
     
-    @Test
-    public void testFileSizeTooBig() throws Exception {
-        System.out.println("fileSize Too Big");
-        Data instance = new Data();
-        instance.setSourceFile(new File("src/main/resources/toiletmapexport_230201_074429.csv"));
-        boolean expResult = true;
-        boolean result = instance.fileSizeTooBig();
-        assertEquals(expResult, result);
-       
-    }
     
     @Test
     public void testValidHeaders() throws Exception {
